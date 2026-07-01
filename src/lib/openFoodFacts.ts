@@ -8,7 +8,21 @@ import type { Product } from '@/types/domain';
  * internet access, scanning a real product barcode returns real data.
  */
 const OFF_ENDPOINT = (barcode: string) =>
-  `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=product_name,brands,categories_tags,labels_tags,packaging,packaging_tags,packagings,image_front_small_url`;
+  `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=
+product_name,
+generic_name,
+brands,
+categories_tags,
+labels_tags,
+ingredients_text,
+packaging,
+packaging_tags,
+packagings,
+quantity,
+countries_tags,
+origins_tags,
+image_front_small_url`
+    .replace(/\s+/g, '');
 
 const OFF_SEARCH_ENDPOINT = (query: string) =>
   `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(
@@ -34,6 +48,11 @@ interface OffProduct {
   packaging_tags?: string[];
   packagings?: { material?: string; shape?: string; recycling?: string }[];
   image_front_small_url?: string;
+  generic_name?: string;
+  ingredients_text?: string;
+  quantity?: string;
+  countries_tags?: string[];
+  origins_tags?: string[];
 }
 
 function cleanTag(tag: string): string {
@@ -101,13 +120,15 @@ async function searchProductByName(query: string): Promise<Product | null> {
 function mapOffProduct(barcode: string, p: OffProduct): Product {
   const packagingText = p.packaging
     ? p.packaging
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean)
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
     : [];
-  const packagingParts = (p.packagings ?? []).flatMap((part) =>
-    [part.material, part.shape, part.recycling].filter((value): value is string => Boolean(value))
-  );
+  const packagingParts = (p.packagings ?? []).map((part) => {
+    return [part.material, part.shape]
+      .filter(Boolean)
+      .join(" ");
+  });
 
   return {
     barcode,

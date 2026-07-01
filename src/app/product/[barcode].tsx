@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, ActivityIndicator } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { MotiView } from 'moti';
 import * as Location from 'expo-location';
-import { X, Sparkles, MapPin, Leaf } from 'lucide-react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Leaf, MapPin, Sparkles, X } from 'lucide-react-native';
+import { MotiView } from 'moti';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
 
-import { useTheme } from '@/hooks/use-theme';
-import { useScanHistory } from '@/context/ScanHistoryContext';
-import { useCurrentContext } from '@/context/CurrentContext';
-import { Space } from '@/constants/theme';
-import { Text, Card, Badge, Button, IconButton, FactorBar, Divider } from '@/components/ui';
+import { Badge, Button, Card, Divider, FactorBar, IconButton, Text } from '@/components/ui';
 import { ScoreGauge } from '@/components/ui/ScoreGauge';
-import { fetchProductByBarcode, fallbackProductForBarcode } from '@/lib/openFoodFacts';
-import { classifyWasteType, recommendDisposalAction, WASTE_TYPE_LABEL, DISPOSAL_LABEL, DISPOSAL_COPY } from '@/lib/wasteMapping';
+import { Space } from '@/constants/theme';
+import { useCurrentContext } from '@/context/CurrentContext';
+import { useScanHistory } from '@/context/ScanHistoryContext';
+import { useTheme } from '@/hooks/use-theme';
+import { fallbackProductForBarcode, fetchProductByBarcode } from '@/lib/openFoodFacts';
+import { findRecyclersForWasteType, formatDistanceKm, getSeededRecyclers, haversineDistanceKm } from '@/lib/recyclers';
 import { computeScore, estimateKgCo2, explainScore } from '@/lib/scoring';
-import { getSeededRecyclers, findRecyclersForWasteType, formatDistanceKm, haversineDistanceKm } from '@/lib/recyclers';
+import { classifyWasteType, DISPOSAL_COPY, DISPOSAL_LABEL, getPackagingBreakdown, recommendDisposalAction, WASTE_TYPE_LABEL } from '@/lib/wasteMapping';
 import type { Product, SustainabilityProfile } from '@/types/domain';
 
 export default function ProductScreen() {
@@ -112,6 +112,7 @@ export default function ProductScreen() {
   }
 
   const { product, score, wasteType, disposalAction, explanation } = profile;
+  const packagingBreakdown = getPackagingBreakdown(product);
   const matches = findRecyclersForWasteType(recyclersNearby, wasteType);
   const nearest = matches[0];
   const distance = nearest && userLocation ? haversineDistanceKm(userLocation, nearest) : null;
@@ -180,6 +181,59 @@ export default function ProductScreen() {
           <Text variant="bodySm" color={theme.textSecondary} style={{ flex: 1 }}>
             {DISPOSAL_COPY[disposalAction]}
           </Text>
+        </Card>
+
+        {/* ---------- Packaging Breakdown ---------- */}
+
+        <Card style={{ marginTop: Space.lg }}>
+          <Text variant="h2">Packaging Breakdown</Text>
+
+          <Text
+            variant="bodySm"
+            color={theme.textSecondary}
+            style={{ marginTop: 4, marginBottom: Space.md }}
+          >
+            Individual packaging components and how they should be handled.
+          </Text>
+
+          {packagingBreakdown.map((item, index) => (
+            <View
+              key={index}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                marginBottom: Space.md,
+              }}
+            >
+              <View
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: item.recyclable ? theme.lichen : theme.clay,
+                  marginTop: 6,
+                  marginRight: 12,
+                }}
+              />
+
+              <View style={{ flex: 1 }}>
+                <Text
+                  variant="bodySm"
+                  style={{ fontFamily: 'Archivo_700Bold' }}
+                >
+                  {item.material}
+                </Text>
+
+                <Text
+                  variant="monoSm"
+                  color={theme.textSecondary}
+                  style={{ marginTop: 2 }}
+                >
+                  {item.instruction}
+                </Text>
+              </View>
+            </View>
+          ))}
         </Card>
 
         <Divider />

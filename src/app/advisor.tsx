@@ -1,28 +1,24 @@
 import { router } from "expo-router";
 import {
   CheckCircle2,
-  ChevronRight,
-  Info,
-  Leaf,
+  Lightbulb,
   MapPin,
   Recycle,
   ScanLine,
   Sparkles,
   TreePine,
   X,
-  XCircle,
-  AlertTriangle,
-  Lightbulb
+  XCircle
 } from "lucide-react-native";
 import { MotiView } from "moti";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { Card, EmptyState, IconBadge, IconButton, Text } from "@/components/ui";
 import { Space } from "@/constants/theme";
 import { useCurrentContext } from "@/context/CurrentContext";
 import { useTheme } from "@/hooks/use-theme";
-import { AI_PROMPTS, generateAIReport, askAdvisor } from "@/lib/aiAdvisor";
+import { AI_PROMPTS, askAdvisor, generateAIReport } from "@/lib/aiAdvisor";
 import type { AIReport, AiPrompt } from "@/types/domain";
 
 function TypewriterText({ text }: { text: string }) {
@@ -236,7 +232,7 @@ export default function AdvisorScreen() {
             <View style={{ height: Space.lg }} />
 
             {/* Environmental Impact */}
-            <Card tint={theme.canopy} style={{ gap: Space.sm }}>
+            <Card tint={theme.canopy} style={{ gap: Space.sm, padding: Space.lg }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm, marginBottom: Space.sm }}>
                 <TreePine size={20} color={theme.background} />
                 <Text variant="h2" color={theme.background}>Environmental Impact</Text>
@@ -265,7 +261,7 @@ export default function AdvisorScreen() {
             <View style={{ height: Space.lg }} />
 
             {/* Circular Journey */}
-            <Card borderAccent={theme.lichen} style={{ gap: Space.sm }}>
+            <Card borderAccent={theme.lichen} style={{ gap: Space.sm, padding: Space.lg }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm, marginBottom: Space.xs }}>
                 <IconBadge icon={MapPin} accent={theme.lichen} size={28} />
                 <Text variant="h2">Circular Journey</Text>
@@ -286,7 +282,7 @@ export default function AdvisorScreen() {
             <View style={{ height: Space.lg }} />
 
             {/* Recommendations */}
-            <Card style={{ gap: Space.md }}>
+            <Card style={{ gap: Space.md, padding: Space.lg }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm }}>
                 <IconBadge icon={Lightbulb} accent={theme.teal} size={28} />
                 <Text variant="h2">Recommendations</Text>
@@ -335,7 +331,15 @@ export default function AdvisorScreen() {
                   <View style={{ alignSelf: "flex-start", maxWidth: "92%" }}>
                     <Card style={{ flexDirection: "row", gap: Space.sm }}>
                       <Sparkles size={16} color={theme.gold} style={{ marginTop: 2 }} />
-                      <TypewriterText text={ex.answer} />
+                      <Text
+                        variant="bodySm"
+                        style={{
+                          flex: 1,
+                          lineHeight: 22,
+                        }}
+                      >
+                        {ex.answer}
+                      </Text>
                     </Card>
                   </View>
                 </MotiView>

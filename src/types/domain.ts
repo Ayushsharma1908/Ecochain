@@ -21,10 +21,27 @@ export interface Product {
   barcode: string;
   name: string;
   brand?: string;
+
   categories: string[];
+
   labels: string[];
+
   packaging: string[];
+
+  ingredients?: string;
+
+  quantity?: string;
+
+  ecoScore?: string;
+
+  nutriScore?: string;
+
+  country?: string;
+
+  origin?: string;
+
   imageUrl?: string;
+
   source: "open-food-facts" | "fallback";
 }
 
@@ -103,6 +120,11 @@ export interface AIRecyclerInfo {
   pickupAvailable: boolean;
 }
 
+export interface PackagingComponent {
+  material: string;
+  recyclable: boolean;
+  instruction: string;
+}
 export interface AIReport {
   summary: string;
 
