@@ -1,7 +1,7 @@
-import React from 'react';
-import { Pressable, View, type ViewProps, type ViewStyle } from 'react-native';
-import { Radius, Shadow, Space } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { Radius, Shadow, Space } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import React from "react";
+import { Pressable, View, type ViewProps, type ViewStyle } from "react-native";
 
 export interface CardProps extends ViewProps {
   elevated?: boolean;
@@ -9,11 +9,22 @@ export interface CardProps extends ViewProps {
   tint?: string;
   borderAccent?: string;
   onPress?: () => void;
+  disabled?: boolean;
   style?: ViewStyle | ViewStyle[];
 }
 
 /** A soft, rounded surface — the base building block for almost every screen. */
-export function Card({ elevated = true, padded = true, tint, borderAccent, onPress, style, children, ...rest }: CardProps) {
+export function Card({
+  elevated = true,
+  padded = true,
+  tint,
+  borderAccent,
+  onPress,
+  disabled,
+  style,
+  children,
+  ...rest
+}: CardProps) {
   const theme = useTheme();
 
   const baseStyle = [
@@ -31,7 +42,14 @@ export function Card({ elevated = true, padded = true, tint, borderAccent, onPre
 
   if (onPress) {
     return (
-      <Pressable onPress={onPress} style={({ pressed }) => [...baseStyle, { opacity: pressed ? 0.88 : 1 }]}>
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        style={({ pressed }) => [
+          ...baseStyle,
+          { opacity: disabled ? 0.5 : pressed ? 0.88 : 1 },
+        ]}
+      >
         {children}
       </Pressable>
     );
