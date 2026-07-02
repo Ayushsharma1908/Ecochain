@@ -1,4 +1,4 @@
-import type { AdvisorContext } from "@/lib/aiAdvisor_old";
+import type { AdvisorContext } from "@/lib/aiAdvisor";
 import React, {
   createContext,
   useCallback,

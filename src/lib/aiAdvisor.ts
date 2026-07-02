@@ -10,27 +10,23 @@ import type {
   Recycler,
   ScoreBreakdown,
   WasteTypeId,
-} from '@/types/domain';
+} from "@/types/domain";
 
 import {
   DISPOSAL_COPY,
   DISPOSAL_GUIDES,
   ECO_FACTS,
   WASTE_TYPE_LABEL,
-} from '@/lib/wasteMapping';
+} from "@/lib/wasteMapping";
 
-import {
-  explainScore,
-  getScoreInsights,
-  scoreTier,
-} from '@/lib/scoring';
+import { explainScore, getScoreInsights, scoreTier } from "@/lib/scoring";
 
 import {
   findRecyclersForWasteType,
   formatDistanceKm,
   getBestRecycler,
-  haversineDistanceKm
-} from '@/lib/recyclers';
+  haversineDistanceKm,
+} from "@/lib/recyclers";
 
 /* -------------------------------------------------------------------------- */
 /*                               AI QUICK ACTIONS                             */
@@ -38,32 +34,32 @@ import {
 
 export const AI_PROMPTS: AiPrompt[] = [
   {
-    id: 'advisor',
-    label: 'AI Sustainability Report',
-    icon: 'sparkles',
-    accent: 'teal',
-    question: 'Analyze this product',
+    id: "advisor",
+    label: "AI Sustainability Report",
+    icon: "sparkles",
+    accent: "teal",
+    question: "Analyze this product",
   },
   {
-    id: 'alternatives',
-    label: 'Better Alternatives',
-    icon: 'leaf',
-    accent: 'lichen',
-    question: 'How can I make a greener choice?',
+    id: "alternatives",
+    label: "Better Alternatives",
+    icon: "leaf",
+    accent: "lichen",
+    question: "How can I make a greener choice?",
   },
   {
-    id: 'guidance',
-    label: 'Disposal Guide',
-    icon: 'recycle',
-    accent: 'clay',
-    question: 'How should I dispose of this?',
+    id: "guidance",
+    label: "Disposal Guide",
+    icon: "recycle",
+    accent: "clay",
+    question: "How should I dispose of this?",
   },
   {
-    id: 'pickup',
-    label: 'Recycler Advice',
-    icon: 'coins',
-    accent: 'gold',
-    question: 'Where should I recycle this?',
+    id: "pickup",
+    label: "Recycler Advice",
+    icon: "coins",
+    accent: "gold",
+    question: "Where should I recycle this?",
   },
 ];
 
@@ -83,118 +79,103 @@ export interface AdvisorContext {
 
 /* -------------------------------------------------------------------------- */
 
-const IMPROVEMENT_TIPS: Record<
-  WasteTypeId,
-  AIRecommendation[]
-> = {
+const IMPROVEMENT_TIPS: Record<WasteTypeId, AIRecommendation[]> = {
   plastic: [
     {
-      title: 'Next Purchase',
+      title: "Next Purchase",
       description:
-        'Choose products packaged in paper, glass or refill containers whenever possible.',
+        "Choose products packaged in paper, glass or refill containers whenever possible.",
     },
     {
-      title: 'Today',
-      description:
-        'Clean and separate plastic before recycling.',
+      title: "Today",
+      description: "Clean and separate plastic before recycling.",
     },
   ],
 
   paper: [
     {
-      title: 'Today',
-      description:
-        'Keep paper dry and remove plastic wrapping.',
+      title: "Today",
+      description: "Keep paper dry and remove plastic wrapping.",
     },
     {
-      title: 'Next Purchase',
-      description:
-        'Prefer recycled paper products.',
+      title: "Next Purchase",
+      description: "Prefer recycled paper products.",
     },
   ],
 
   metal: [
     {
-      title: 'Today',
-      description:
-        'Rinse cans before recycling.',
+      title: "Today",
+      description: "Rinse cans before recycling.",
     },
     {
-      title: 'Next Purchase',
-      description:
-        'Choose reusable metal containers.',
+      title: "Next Purchase",
+      description: "Choose reusable metal containers.",
     },
   ],
 
   glass: [
     {
-      title: 'Today',
-      description:
-        'Reuse jars and bottles before recycling.',
+      title: "Today",
+      description: "Reuse jars and bottles before recycling.",
     },
     {
-      title: 'Next Purchase',
-      description:
-        'Choose returnable glass packaging when available.',
+      title: "Next Purchase",
+      description: "Choose returnable glass packaging when available.",
     },
   ],
 
   mixed: [
     {
-      title: 'Today',
-      description:
-        'Separate different materials whenever possible.',
+      title: "Today",
+      description: "Separate different materials whenever possible.",
     },
     {
-      title: 'Next Purchase',
-      description:
-        'Avoid multi-layer packaging and choose simpler materials.',
+      title: "Next Purchase",
+      description: "Avoid multi-layer packaging and choose simpler materials.",
     },
   ],
 };
 
-const CIRCULAR_JOURNEY: Record<
-  WasteTypeId,
-  string[]
-> = {
+const CIRCULAR_JOURNEY: Record<WasteTypeId, string[]> = {
   plastic: [
-    'Used Product',
-    'Plastic Collection',
-    'Sorting Facility',
-    'Recycling Plant',
-    'New Plastic Product',
+    "Used Product",
+    "Plastic Collection",
+    "Sorting Facility",
+    "Recycling Plant",
+    "New Plastic Product",
   ],
 
   paper: [
-    'Used Paper',
-    'Paper Collection',
-    'Pulp Processing',
-    'Paper Mill',
-    'New Paper Product',
+    "Used Paper",
+    "Paper Collection",
+    "Pulp Processing",
+    "Paper Mill",
+    "New Paper Product",
   ],
 
   metal: [
-    'Used Metal',
-    'Scrap Collection',
-    'Metal Furnace',
-    'Rolling Mill',
-    'New Metal Product',
+    "Used Metal",
+    "Scrap Collection",
+    "Metal Furnace",
+    "Rolling Mill",
+    "New Metal Product",
   ],
 
   glass: [
-    'Glass Bottle',
-    'Collection',
-    'Glass Crusher',
-    'Glass Furnace',
-    'New Bottle',
+    "Glass Bottle",
+    "Collection",
+    "Glass Crusher",
+    "Glass Furnace",
+    "New Bottle",
   ],
 
   mixed: [
-    'Used Packaging',
-    'Sorting',
-    'Partial Recovery',
-    'Waste Processing',
-    'Final Disposal',
+    "Used Packaging",
+    "Sorting",
+    "Partial Recovery",
+    "Waste Processing",
+    "Final Disposal",
   ],
 };
 
@@ -208,7 +189,12 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
   const { strengths, weaknesses } = getScoreInsights(ctx.score, ctx.product);
   const facts = ECO_FACTS[ctx.wasteType] || ["Recycling saves energy."];
   const fact = facts[Math.floor(Math.random() * facts.length)];
-  const journey = CIRCULAR_JOURNEY[ctx.wasteType] || ["Used Product", "Collection", "Processing", "New Product"];
+  const journey = CIRCULAR_JOURNEY[ctx.wasteType] || [
+    "Used Product",
+    "Collection",
+    "Processing",
+    "New Product",
+  ];
   const tier = scoreTier(ctx.score.total);
   const recyclers = findRecyclersForWasteType(ctx.recyclers, ctx.wasteType);
   const nearest = recyclers.length > 0 ? recyclers[0] : undefined;
@@ -220,7 +206,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     recommendations.push({
       title: "Reduce Packaging Waste",
       description:
-        "Choose products with simpler single-material packaging that is easier to recycle."
+        "Choose products with simpler single-material packaging that is easier to recycle.",
     });
   }
 
@@ -229,7 +215,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     recommendations.push({
       title: "Choose Certified Products",
       description:
-        "Look for products carrying recognised sustainability certifications such as Organic or Fair Trade."
+        "Look for products carrying recognised sustainability certifications such as Organic or Fair Trade.",
     });
   }
 
@@ -238,7 +224,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     recommendations.push({
       title: "Reuse the Container",
       description:
-        "Reuse the glass jar or bottle several times before recycling it."
+        "Reuse the glass jar or bottle several times before recycling it.",
     });
   }
 
@@ -247,7 +233,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     recommendations.push({
       title: "Recycle Clean Plastic",
       description:
-        "Rinse the packaging before recycling to improve material recovery."
+        "Rinse the packaging before recycling to improve material recovery.",
     });
   }
 
@@ -256,7 +242,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     recommendations.push({
       title: "Keep Paper Dry",
       description:
-        "Ensure paper packaging is clean and dry before placing it in recycling."
+        "Ensure paper packaging is clean and dry before placing it in recycling.",
     });
   }
 
@@ -264,8 +250,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
   if (ctx.wasteType === "metal") {
     recommendations.push({
       title: "Recycle Metal",
-      description:
-        "Metal can be recycled indefinitely without losing quality."
+      description: "Metal can be recycled indefinitely without losing quality.",
     });
   }
 
@@ -274,7 +259,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     recommendations.push({
       title: "Avoid Mixed Packaging",
       description:
-        "Choose products packaged using a single recyclable material whenever possible."
+        "Choose products packaged using a single recyclable material whenever possible.",
     });
   }
 
@@ -282,7 +267,7 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
   if (nearest) {
     recommendations.push({
       title: "Use Nearby Recycling Facility",
-      description: `Recycle this product at ${nearest.name} for proper processing.`
+      description: `Recycle this product at ${nearest.name} for proper processing.`,
     });
   }
 
@@ -295,40 +280,76 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
     }
     nearestRecycler = {
       name: nearest.name,
-      distance: distanceStr || 'Unknown',
-      pickupAvailable: nearest.hasTransportPartner
+      distance: distanceStr || "Unknown",
+      pickupAvailable: nearest.hasTransportPartner,
     };
   }
 
-  const isPlastic = ctx.wasteType === 'plastic';
-  const isMixed = ctx.wasteType === 'mixed';
+  const isPlastic = ctx.wasteType === "plastic";
+  const isMixed = ctx.wasteType === "mixed";
 
   const environmentalImpact: AIImpactMetrics = {
-    landfillRisk: isMixed ? 'High' : (isPlastic ? 'Medium' : 'Low'),
-    recyclability: isMixed ? 'Low' : (tier.accent === 'lichen' ? 'High' : 'Medium'),
-    carbonImpact: ctx.score.base < 40 ? 'High' : (ctx.score.base > 70 ? 'Low' : 'Moderate'),
-    reusePotential: (ctx.wasteType === 'glass' || ctx.wasteType === 'metal') ? 'High' : (isPlastic ? 'Moderate' : 'Low')
+    landfillRisk: isMixed ? "High" : isPlastic ? "Medium" : "Low",
+    recyclability: isMixed
+      ? "Low"
+      : tier.accent === "lichen"
+        ? "High"
+        : "Medium",
+    carbonImpact:
+      ctx.score.base < 40 ? "High" : ctx.score.base > 70 ? "Low" : "Moderate",
+    reusePotential:
+      ctx.wasteType === "glass" || ctx.wasteType === "metal"
+        ? "High"
+        : isPlastic
+          ? "Moderate"
+          : "Low",
   };
 
   const scoreReasons: AIScoreReason[] = [];
   if (ctx.score.base < 50) {
-    scoreReasons.push({ title: 'Category Footprint', description: 'This category tends to have a higher environmental impact.', impact: 'negative' });
+    scoreReasons.push({
+      title: "Category Footprint",
+      description: "This category tends to have a higher environmental impact.",
+      impact: "negative",
+    });
   } else if (ctx.score.base >= 70) {
-    scoreReasons.push({ title: 'Good Material', description: 'Product category has a generally lower environmental footprint.', impact: 'positive' });
+    scoreReasons.push({
+      title: "Good Material",
+      description:
+        "Product category has a generally lower environmental footprint.",
+      impact: "positive",
+    });
   }
 
   if (ctx.score.labelBonus > 0) {
-    scoreReasons.push({ title: 'Eco Certifications', description: 'Recognized sustainability certifications found.', impact: 'positive', points: ctx.score.labelBonus });
+    scoreReasons.push({
+      title: "Eco Certifications",
+      description: "Recognized sustainability certifications found.",
+      impact: "positive",
+      points: ctx.score.labelBonus,
+    });
   }
   if (ctx.score.recyclerBonus > 0) {
-    scoreReasons.push({ title: 'Local Recycling', description: 'A nearby facility accepts this material.', impact: 'positive', points: ctx.score.recyclerBonus });
+    scoreReasons.push({
+      title: "Local Recycling",
+      description: "A nearby facility accepts this material.",
+      impact: "positive",
+      points: ctx.score.recyclerBonus,
+    });
   }
   if (ctx.score.packagingPenalty > 0) {
-    scoreReasons.push({ title: 'Packaging Complexity', description: 'Difficult to recycle packaging materials.', impact: 'negative', points: -ctx.score.packagingPenalty });
+    scoreReasons.push({
+      title: "Packaging Complexity",
+      description: "Difficult to recycle packaging materials.",
+      impact: "negative",
+      points: -ctx.score.packagingPenalty,
+    });
   }
 
   const disposalGuide = DISPOSAL_GUIDES[ctx.wasteType];
-  const disposalSteps = disposalGuide ? disposalGuide.steps : ['Dispose thoughtfully.'];
+  const disposalSteps = disposalGuide
+    ? disposalGuide.steps
+    : ["Dispose thoughtfully."];
 
   let summary = `${ctx.product.name} has a ${tier.label.toLowerCase()} sustainability score of ${ctx.score.total}/100. `;
 
@@ -378,17 +399,29 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
   }
   const report: AIReport = {
     summary,
-    strengths: strengths.length ? strengths : ['No major sustainability strengths identified.'],
-    weaknesses: weaknesses.length ? weaknesses : ['No major sustainability concerns.'],
-    scoreReasons: scoreReasons.length ? scoreReasons : [{ title: 'Average Profile', description: 'Standard environmental impact for this category.', impact: 'neutral' }],
+    strengths: strengths.length
+      ? strengths
+      : ["No major sustainability strengths identified."],
+    weaknesses: weaknesses.length
+      ? weaknesses
+      : ["No major sustainability concerns."],
+    scoreReasons: scoreReasons.length
+      ? scoreReasons
+      : [
+          {
+            title: "Average Profile",
+            description: "Standard environmental impact for this category.",
+            impact: "neutral",
+          },
+        ],
     disposalSteps,
     recommendations,
     environmentalImpact,
     nearestRecycler,
     circularJourney: journey,
     interestingFact: fact,
-    confidence: 'High',
-    reasoning: explainScore(ctx.score, ctx.product)
+    confidence: "High",
+    reasoning: explainScore(ctx.score, ctx.product),
   };
 
   return report;
@@ -397,166 +430,96 @@ export async function generateAIReport(ctx: AdvisorContext): Promise<AIReport> {
 function buildGeminiInput(
   promptId: string,
   ctx: AdvisorContext,
-  report?: AIReport
+  report?: AIReport,
 ): string {
   const recycler = getBestRecycler(
     ctx.recyclers,
     ctx.wasteType,
-    ctx.userLocation
+    ctx.userLocation,
   );
-
-  const baseInfo = `
-You are EcoChain AI, an environmental sustainability expert.
-
-Product: ${ctx.product.name}
-Brand: ${ctx.product.brand ?? "Unknown"}
-
-Category:
-${ctx.product.categories.join(", ") || "Unknown"}
-
-Packaging:
-${ctx.product.packaging.join(", ") || "Unknown"}
-
-Labels:
-${ctx.product.labels.join(", ") || "None"}
-
-Waste Type:
-${WASTE_TYPE_LABEL[ctx.wasteType]}
-
-Recommended Disposal:
-${ctx.disposalAction}
-
-Sustainability Score:
-${ctx.score.total}/100
-
-Base Score: ${ctx.score.base}
-Label Bonus: +${ctx.score.labelBonus}
-Packaging Penalty: -${ctx.score.packagingPenalty}
-Recycler Bonus: +${ctx.score.recyclerBonus}
-`;
 
   switch (promptId) {
     case "advisor":
-      return `
-${baseInfo}
-
-Question:
-Why did this product receive this sustainability score?
-
-Instructions:
-- Explain the score in simple language.
-- Mention the biggest strength.
-- Mention the biggest weakness.
-- Explain how the packaging affected the score.
-- Give one practical improvement.
-- Use 90-120 words.
-- Do not invent facts.
-- Plain text only.
-`;
+      return `Product: ${ctx.product.name}
+Score: ${ctx.score.total}/100 (Base: ${ctx.score.base}, Labels: +${ctx.score.labelBonus}, Pkg Penalty: -${ctx.score.packagingPenalty})
+Why did it receive this score? Mentions strengths and weaknesses. Max 100 words. Plain text.`;
 
     case "alternatives":
-      return `
-${baseInfo}
-
-Question:
-How can the user make a greener purchasing decision?
-
-Instructions:
-- Suggest better packaging choices.
-- Mention sustainability labels if relevant.
-- Recommend realistic improvements.
-- Do not recommend products that are unknown.
-- Use 80-120 words.
-- Plain text only.
-`;
+      return `Product: ${ctx.product.name} (Category: ${ctx.product.categories[0] || "Unknown"})
+Current Labels: ${ctx.product.labels.join(", ") || "None"}.
+How can the user make a greener purchasing decision? Focus on packaging and labels. Max 100 words.`;
 
     case "guidance":
-      return `
-${baseInfo}
-
-Nearest Recycler:
-${recycler?.name ?? "No recycler available"}
-
-Question:
-How should this packaging be disposed of?
-
-Instructions:
-- Explain the correct disposal process.
-- Mention whether it should be cleaned first.
-- Mention if any parts should be separated.
-- Mention reuse if appropriate.
-- Mention recycling.
-- Mention what to do if recycling is unavailable.
-- Use 80-120 words.
-- Plain text only.
-`;
+      return `Product: ${ctx.product.name} (Pkg: ${ctx.product.packaging.join(", ")}).
+Waste Type: ${WASTE_TYPE_LABEL[ctx.wasteType]}. Disposal: ${ctx.disposalAction}.
+Nearest Recycler: ${recycler?.name ?? "None"}.
+How should they dispose of this? Max 100 words.`;
 
     case "pickup":
-      return `
-${baseInfo}
-
-Nearest Recycler:
-${recycler?.name ?? "No recycler available"}
-
-Pickup Available:
-${recycler?.hasTransportPartner ? "Yes" : "No"}
-
-Distance:
-${recycler && ctx.userLocation
+      const distance =
+        recycler && ctx.userLocation
           ? formatDistanceKm(haversineDistanceKm(ctx.userLocation, recycler))
-          : "Unknown"
-        }
+          : "Unknown";
 
-Question:
-Where should the user recycle this product?
-
-Instructions:
-- Explain why this recycler is suitable.
-- Mention pickup availability.
-- Mention distance.
-- Give one transport suggestion.
-- Use 70-100 words.
-- Plain text only.
-`;
+      return `Product: ${ctx.product.name}. Nearest Recycler: ${recycler?.name ?? "None"} (${distance}).
+Pickup Support: ${recycler?.hasTransportPartner ? "Yes" : "No"}.
+Where should they recycle this? Max 100 words.`;
 
     default:
-      return `
-${baseInfo}
-
-Answer the user's question using only the available information.
-Do not invent facts.
-Keep the answer under 100 words.
-`;
+      return `Product: ${ctx.product.name}. Answer user contextually. Max 60 words.`;
   }
 }
 
-export async function askAdvisor(promptId: string, ctx: AdvisorContext, report?: AIReport): Promise<string> {
+export async function askAdvisor(
+  promptId: string,
+  ctx: AdvisorContext,
+  report?: AIReport,
+): Promise<string> {
   const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY?.trim();
-  const model = (process.env.EXPO_PUBLIC_GEMINI_MODEL || 'gemini-2.5-flash').trim();
+  const model = (
+    process.env.EXPO_PUBLIC_GEMINI_MODEL || "gemini-2.5-flash"
+  ).trim();
 
   if (apiKey) {
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: buildGeminiInput(promptId, ctx, report) }] }],
-          generationConfig: {
-            temperature: 0.35,
-            topP: 0.9,
-            maxOutputTokens: 700
-          }
-        })
-      });
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: "user",
+                parts: [{ text: buildGeminiInput(promptId, ctx, report) }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.35,
+              topP: 0.9,
+              maxOutputTokens: 250, // Optimize response tokens
+            },
+          }),
+        },
+      );
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.log("STATUS:", res.status);
+        console.log("ERROR:", errorText);
+        throw new Error(`Gemini HTTP Error ${res.status}`);
+      }
+
       const data = await res.json();
-
-      console.log("===== GEMINI RESPONSE =====");
-      console.log(JSON.stringify(data, null, 2));
-      console.log("===========================");
-
       const candidate = data.candidates?.[0];
+      const finishReason = candidate?.finishReason;
 
-      console.log("Finish Reason:", candidate?.finishReason);
+      if (finishReason && finishReason !== "STOP") {
+        console.warn("[aiAdvisor] Unusual FinishReason:", finishReason);
+        if (finishReason === "MAX_TOKENS" || finishReason === "SAFETY") {
+          throw new Error(`Gemini blocked by reason: ${finishReason}`);
+        }
+      }
 
       const text = candidate?.content?.parts
         ?.map((part: any) => part.text ?? "")
@@ -564,11 +527,12 @@ export async function askAdvisor(promptId: string, ctx: AdvisorContext, report?:
         .replace(/[\u200B-\u200D\uFEFF]/g, "")
         .trim();
 
-      console.log("Generated Text:", text);
-
       if (text) return text;
     } catch (e) {
-      console.warn("[aiAdvisor] Gemini fetch failed", e);
+      console.warn(
+        "[aiAdvisor] Gemini generation failed, using local fallback. Error:",
+        e,
+      );
     }
   }
 
@@ -576,44 +540,50 @@ export async function askAdvisor(promptId: string, ctx: AdvisorContext, report?:
   const recycler = getBestRecycler(
     ctx.recyclers,
     ctx.wasteType,
-    ctx.userLocation
+    ctx.userLocation,
   );
 
   switch (promptId) {
-
     case "advisor":
-      return `${ctx.product.name} has a sustainability score of ${ctx.score.total}/100. ${ctx.score.total >= 70
-        ? "Its environmental profile is relatively good."
-        : ctx.score.total >= 50
-          ? "It performs reasonably well but could be improved."
-          : "Its environmental impact is higher than average."
-        } ${ctx.score.packagingPenalty > 0
+      return `${ctx.product.name} has a sustainability score of ${ctx.score.total}/100. ${
+        ctx.score.total >= 70
+          ? "Its environmental profile is relatively good."
+          : ctx.score.total >= 50
+            ? "It performs reasonably well but could be improved."
+            : "Its environmental impact is higher than average."
+      } ${
+        ctx.score.packagingPenalty > 0
           ? "Packaging contributes to the lower score because it is harder to recycle."
           : ""
-        } ${ctx.product.labels.length
+      } ${
+        ctx.product.labels.length
           ? `Eco labels such as ${ctx.product.labels.join(", ")} improve its sustainability.`
           : ""
-        }`;
+      }`;
 
     case "alternatives":
       return `To make a greener choice, look for products in the same category with recyclable packaging, recognised sustainability certifications, and minimal plastic use. Choosing refill packs or reusable containers can significantly reduce environmental impact.`;
 
     case "guidance":
-      return `${ctx.product.name} is classified as ${WASTE_TYPE_LABEL[ctx.wasteType]
-        }. ${DISPOSAL_COPY[ctx.disposalAction]} ${recycler
+      return `${ctx.product.name} is classified as ${
+        WASTE_TYPE_LABEL[ctx.wasteType]
+      }. ${DISPOSAL_COPY[ctx.disposalAction]} ${
+        recycler
           ? `A nearby recycler (${recycler.name}) can process this material.`
           : "No nearby recycler is currently available."
-        }`;
+      }`;
 
     case "pickup":
       if (recycler) {
-        return `${recycler.name} accepts this material${recycler.hasTransportPartner
-          ? " and also provides pickup support."
-          : "."
-          } ${ctx.userLocation
+        return `${recycler.name} accepts this material${
+          recycler.hasTransportPartner
+            ? " and also provides pickup support."
+            : "."
+        } ${
+          ctx.userLocation
             ? "You can plan a drop-off during your next trip."
             : ""
-          }`;
+        }`;
       }
 
       return "No suitable recycling centre was found nearby. Check your municipality's recycling collection schedule.";
