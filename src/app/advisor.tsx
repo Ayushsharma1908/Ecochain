@@ -8,10 +8,10 @@ import {
   Sparkles,
   TreePine,
   X,
-  XCircle
+  XCircle,
 } from "lucide-react-native";
 import { MotiView } from "moti";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { Card, EmptyState, IconBadge, IconButton, Text } from "@/components/ui";
@@ -21,59 +21,66 @@ import { useTheme } from "@/hooks/use-theme";
 import { AI_PROMPTS, askAdvisor, generateAIReport } from "@/lib/aiAdvisor";
 import type { AIReport, AiPrompt } from "@/types/domain";
 
-function TypewriterText({ text }: { text: string }) {
-  const [displayedText, setDisplayedText] = useState("");
-
-  useEffect(() => {
-    let current = "";
-    let i = 0;
-
-    const interval = setInterval(() => {
-      if (i < text.length) {
-        current += text[i];
-        setDisplayedText(current);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 15);
-
-    return () => clearInterval(interval);
-  }, [text]);
-
-  return (
-    <Text variant="bodySm" style={{ flex: 1, lineHeight: 20 }}>
-      {displayedText}
-    </Text>
-  );
-}
+type ChatExchange = {
+  id: string;
+  prompt: AiPrompt;
+  answer: string;
+};
 
 export default function AdvisorScreen() {
   const theme = useTheme();
   const { context } = useCurrentContext();
   const [report, setReport] = useState<AIReport | null>(null);
   const [loading, setLoading] = useState(false);
-  const [exchanges, setExchanges] = useState<{ prompt: AiPrompt; answer: string }[]>([]);
+  const [exchanges, setExchanges] = useState<ChatExchange[]>([]);
   const [pendingPromptId, setPendingPromptId] = useState<string | null>(null);
+  const requestLock = useRef(false);
+  const reportRequestKey = useRef<string | null>(null);
 
   useEffect(() => {
-    if (context && !report && !loading) {
-      setLoading(true);
-      generateAIReport(context)
-        .then((res) => {
-          setReport(res);
-        })
-        .finally(() => setLoading(false));
-    }
+    if (!context) return;
+
+    const requestKey = context.product.barcode;
+    if (reportRequestKey.current === requestKey) return;
+
+    reportRequestKey.current = requestKey;
+    let cancelled = false;
+
+    setReport(null);
+    setExchanges([]);
+    setLoading(true);
+
+    generateAIReport(context)
+      .then((res) => {
+        if (!cancelled) setReport(res);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [context]);
 
   const ask = async (prompt: AiPrompt) => {
-    if (!context || pendingPromptId !== null) return;
+    if (!context || requestLock.current || pendingPromptId) return;
+
+    requestLock.current = true;
     setPendingPromptId(prompt.id);
+
     try {
-      const answer = await askAdvisor(prompt.id, context, report || undefined);
-      setExchanges((prev) => [...prev, { prompt, answer }]);
+      const answer = await askAdvisor(prompt.id, context, report ?? undefined);
+      const exchangeId = `${prompt.id}-${Date.now()}`;
+
+      setExchanges((prev) => {
+        const duplicate = prev.some(
+          (entry) => entry.prompt.id === prompt.id && entry.answer === answer,
+        );
+        return duplicate ? prev : [...prev, { id: exchangeId, prompt, answer }];
+      });
     } finally {
+      requestLock.current = false;
       setPendingPromptId(null);
     }
   };
@@ -90,7 +97,13 @@ export default function AdvisorScreen() {
             paddingTop: Space.xl,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: Space.sm,
+            }}
+          >
             <IconBadge icon={Sparkles} accent={theme.gold} size={32} />
             <Text variant="h1">AI advisor</Text>
           </View>
@@ -121,7 +134,9 @@ export default function AdvisorScreen() {
           paddingTop: Space.xl,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm }}>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", gap: Space.sm }}
+        >
           <IconBadge icon={Sparkles} accent={theme.gold} size={32} />
           <Text variant="h1">Sustainability Report</Text>
         </View>
@@ -139,7 +154,10 @@ export default function AdvisorScreen() {
       >
         <View>
           <Text variant="bodySm" color={theme.textSecondary}>
-            Analyzing <Text style={{ fontFamily: "Archivo_700Bold" }}>{context.product.name}</Text>
+            Analyzing{" "}
+            <Text style={{ fontFamily: "Archivo_700Bold" }}>
+              {context.product.name}
+            </Text>
           </Text>
         </View>
 
@@ -156,14 +174,19 @@ export default function AdvisorScreen() {
             </Text>
           </MotiView>
         ) : (
-          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }}>
+          <MotiView
+            from={{ opacity: 0, translateY: 10 }}
+            animate={{ opacity: 1, translateY: 0 }}
+          >
             {/* Overall Score */}
             <Card
               tint={theme.canopy}
               borderAccent={theme.gold}
               style={{ padding: Space.xl, alignItems: "center", gap: Space.md }}
             >
-              <Text variant="h2" color={theme.onCanopy}>Overall Insight</Text>
+              <Text variant="h2" color={theme.onCanopy}>
+                Overall Insight
+              </Text>
               <View
                 style={{
                   width: 80,
@@ -175,15 +198,32 @@ export default function AdvisorScreen() {
                   justifyContent: "center",
                 }}
               >
-                <Text variant="h2" color={theme.onCanopy}>{context.score.total}</Text>
-                <Text variant="monoSm" color={theme.onCanopy}>/100</Text>
+                <Text variant="h2" color={theme.onCanopy}>
+                  {context.score.total}
+                </Text>
+                <Text variant="monoSm" color={theme.onCanopy}>
+                  /100
+                </Text>
               </View>
-              <Text variant="bodySm" color={theme.onCanopy} style={{ textAlign: "center" }}>
+              <Text
+                variant="bodySm"
+                color={theme.onCanopy}
+                style={{ textAlign: "center" }}
+              >
                 "{report.summary}"
               </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: Space.sm }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 4,
+                  marginTop: Space.sm,
+                }}
+              >
                 <Sparkles size={14} color={theme.gold} />
-                <Text variant="monoSm" color={theme.gold}>AI Confidence: {report.confidence}</Text>
+                <Text variant="monoSm" color={theme.gold}>
+                  AI Confidence: {report.confidence}
+                </Text>
               </View>
             </Card>
 
@@ -192,21 +232,37 @@ export default function AdvisorScreen() {
             {/* Strengths & Weaknesses */}
             <View style={{ flexDirection: "row", gap: Space.md }}>
               <Card style={{ flex: 1, gap: Space.sm }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: Space.sm }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: Space.sm,
+                  }}
+                >
                   <CheckCircle2 size={18} color={theme.teal} />
                   <Text variant="h2">Strengths</Text>
                 </View>
                 {report.strengths.map((str, i) => (
-                  <Text key={i} variant="monoSm" style={{ flexWrap: 'wrap' }}>✓ {str}</Text>
+                  <Text key={i} variant="monoSm" style={{ flexWrap: "wrap" }}>
+                    ✓ {str}
+                  </Text>
                 ))}
               </Card>
               <Card style={{ flex: 1, gap: Space.sm }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: Space.sm }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: Space.sm,
+                  }}
+                >
                   <XCircle size={18} color={theme.clay} />
                   <Text variant="h2">Weaknesses</Text>
                 </View>
                 {report.weaknesses.map((wk, i) => (
-                  <Text key={i} variant="monoSm" style={{ flexWrap: 'wrap' }}>✗ {wk}</Text>
+                  <Text key={i} variant="monoSm" style={{ flexWrap: "wrap" }}>
+                    ✗ {wk}
+                  </Text>
                 ))}
               </Card>
             </View>
@@ -215,16 +271,47 @@ export default function AdvisorScreen() {
 
             {/* What Should I Do? */}
             <Card style={{ gap: Space.sm, padding: Space.lg }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm, marginBottom: Space.xs }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: Space.sm,
+                  marginBottom: Space.xs,
+                }}
+              >
                 <IconBadge icon={Recycle} accent={theme.teal} size={28} />
                 <Text variant="h2">AI Disposal Guide</Text>
               </View>
               {report.disposalSteps.map((step, idx) => (
-                <View key={idx} style={{ flexDirection: "row", gap: Space.sm, alignItems: 'flex-start' }}>
-                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.cardAlt, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text variant="monoSm" style={{ fontSize: 10 }} color={theme.background}>{idx + 1}</Text>
+                <View
+                  key={idx}
+                  style={{
+                    flexDirection: "row",
+                    gap: Space.sm,
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 10,
+                      backgroundColor: theme.cardAlt,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text
+                      variant="monoSm"
+                      style={{ fontSize: 10 }}
+                      color={theme.background}
+                    >
+                      {idx + 1}
+                    </Text>
                   </View>
-                  <Text variant="bodySm" style={{ flex: 1 }}>{step}</Text>
+                  <Text variant="bodySm" style={{ flex: 1 }}>
+                    {step}
+                  </Text>
                 </View>
               ))}
             </Card>
@@ -232,50 +319,168 @@ export default function AdvisorScreen() {
             <View style={{ height: Space.lg }} />
 
             {/* Environmental Impact */}
-            <Card tint={theme.canopy} style={{ gap: Space.sm, padding: Space.lg }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm, marginBottom: Space.sm }}>
-                <TreePine size={20} color={theme.background} />
-                <Text variant="h2" color={theme.background}>Environmental Impact</Text>
+            <Card
+              tint={theme.canopy}
+              style={{ gap: Space.sm, padding: Space.lg }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: Space.sm,
+                  marginBottom: Space.sm,
+                }}
+              >
+                <TreePine size={20} color={theme.onCanopy} />
+                <Text variant="h2" color={theme.onCanopy}>
+                  Environmental Impact
+                </Text>
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 }}>
-                <Text variant="bodySm" color={theme.background}>Landfill Risk</Text>
-                <Text variant="monoSm" color={theme.background} style={{ opacity: 0.8 }}>{report.environmentalImpact.landfillRisk}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingVertical: 4,
+                }}
+              >
+                <Text variant="bodySm" color={theme.onCanopy}>
+                  Landfill Risk
+                </Text>
+                <Text
+                  variant="monoSm"
+                  color={theme.onCanopy}
+                  style={{ opacity: 0.8 }}
+                >
+                  {report.environmentalImpact.landfillRisk}
+                </Text>
               </View>
-              <View style={{ height: 1, backgroundColor: `${theme.background}20` }} />
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 }}>
-                <Text variant="bodySm" color={theme.background}>Recyclability</Text>
-                <Text variant="monoSm" color={theme.background} style={{ opacity: 0.8 }}>{report.environmentalImpact.recyclability}</Text>
+              <View
+                style={{ height: 1, backgroundColor: `${theme.onCanopy}20` }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingVertical: 4,
+                }}
+              >
+                <Text variant="bodySm" color={theme.onCanopy}>
+                  Recyclability
+                </Text>
+                <Text
+                  variant="monoSm"
+                  color={theme.onCanopy}
+                  style={{ opacity: 0.8 }}
+                >
+                  {report.environmentalImpact.recyclability}
+                </Text>
               </View>
-              <View style={{ height: 1, backgroundColor: `${theme.background}20` }} />
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 }}>
-                <Text variant="bodySm" color={theme.background}>Carbon Impact</Text>
-                <Text variant="monoSm" color={theme.background} style={{ opacity: 0.8 }}>{report.environmentalImpact.carbonImpact}</Text>
+              <View
+                style={{ height: 1, backgroundColor: `${theme.onCanopy}20` }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingVertical: 4,
+                }}
+              >
+                <Text variant="bodySm" color={theme.onCanopy}>
+                  Carbon Impact
+                </Text>
+                <Text
+                  variant="monoSm"
+                  color={theme.onCanopy}
+                  style={{ opacity: 0.8 }}
+                >
+                  {report.environmentalImpact.carbonImpact}
+                </Text>
               </View>
-              <View style={{ height: 1, backgroundColor: `${theme.background}20` }} />
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4 }}>
-                <Text variant="bodySm" color={theme.background}>Reuse Potential</Text>
-                <Text variant="monoSm" color={theme.background} style={{ opacity: 0.8 }}>{report.environmentalImpact.reusePotential}</Text>
+              <View
+                style={{ height: 1, backgroundColor: `${theme.onCanopy}20` }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingVertical: 4,
+                }}
+              >
+                <Text variant="bodySm" color={theme.onCanopy}>
+                  Reuse Potential
+                </Text>
+                <Text
+                  variant="monoSm"
+                  color={theme.onCanopy}
+                  style={{ opacity: 0.8 }}
+                >
+                  {report.environmentalImpact.reusePotential}
+                </Text>
               </View>
             </Card>
 
             <View style={{ height: Space.lg }} />
 
             {/* Circular Journey */}
-            <Card borderAccent={theme.lichen} style={{ gap: Space.sm, padding: Space.lg }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm, marginBottom: Space.xs }}>
+            <Card
+              borderAccent={theme.lichen}
+              style={{ gap: Space.sm, padding: Space.lg }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: Space.sm,
+                  marginBottom: Space.xs,
+                }}
+              >
                 <IconBadge icon={MapPin} accent={theme.lichen} size={28} />
                 <Text variant="h2">Circular Journey</Text>
               </View>
-              <View style={{ gap: Space.xs, paddingLeft: 8, borderLeftWidth: 2, borderColor: theme.border, marginLeft: 6, marginVertical: Space.sm }}>
+              <View
+                style={{
+                  gap: Space.xs,
+                  paddingLeft: 8,
+                  borderLeftWidth: 2,
+                  borderColor: theme.border,
+                  marginLeft: 6,
+                  marginVertical: Space.sm,
+                }}
+              >
                 {report.circularJourney.map((step, idx) => (
-                  <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', gap: Space.sm, marginLeft: -17 }}>
-                    <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: theme.lichen, borderWidth: 2, borderColor: theme.background }} />
+                  <View
+                    key={idx}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: Space.sm,
+                      marginLeft: -17,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: theme.lichen,
+                        borderWidth: 2,
+                        borderColor: theme.background,
+                      }}
+                    />
                     <Text variant="bodySm">{step}</Text>
                   </View>
                 ))}
               </View>
-              <View style={{ backgroundColor: theme.background, padding: Space.sm, borderRadius: 8 }}>
-                <Text variant="monoSm" color={theme.textSecondary}>Fact: {report.interestingFact}</Text>
+              <View
+                style={{
+                  backgroundColor: theme.background,
+                  padding: Space.sm,
+                  borderRadius: 8,
+                }}
+              >
+                <Text variant="monoSm" color={theme.textSecondary}>
+                  Fact: {report.interestingFact}
+                </Text>
               </View>
             </Card>
 
@@ -283,13 +488,21 @@ export default function AdvisorScreen() {
 
             {/* Recommendations */}
             <Card style={{ gap: Space.md, padding: Space.lg }}>
-              <View style={{ flexDirection: "row", alignItems: "center", gap: Space.sm }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: Space.sm,
+                }}
+              >
                 <IconBadge icon={Lightbulb} accent={theme.teal} size={28} />
                 <Text variant="h2">Recommendations</Text>
               </View>
               {report.recommendations.map((rec, i) => (
                 <View key={i} style={{ gap: 2 }}>
-                  <Text variant="monoSm" color={theme.teal}>{rec.title}</Text>
+                  <Text variant="monoSm" color={theme.teal}>
+                    {rec.title}
+                  </Text>
                   <Text variant="bodySm">{rec.description}</Text>
                 </View>
               ))}
@@ -300,53 +513,71 @@ export default function AdvisorScreen() {
             <View style={{ height: Space.xl }} />
 
             {/* Ask More */}
-            <Text variant="h2" style={{ marginBottom: Space.sm }}>Ask More</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Space.sm }}>
+            <Text variant="h2" style={{ marginBottom: Space.sm }}>
+              Ask More
+            </Text>
+            <View
+              style={{ flexDirection: "row", flexWrap: "wrap", gap: Space.sm }}
+            >
               {AI_PROMPTS.map((prompt) => (
                 <Card
                   key={prompt.id}
                   onPress={() => ask(prompt)}
-                  style={{ width: '48%', padding: Space.sm }}
+                  disabled={!!pendingPromptId}
+                  style={{ width: "48%", padding: Space.sm }}
                   borderAccent={theme[prompt.accent]}
                 >
-                  <Text variant="monoSm" style={{ textAlign: 'center' }}>
-                    {pendingPromptId === prompt.id ? "Thinking..." : prompt.label}
+                  <Text variant="monoSm" style={{ textAlign: "center" }}>
+                    {pendingPromptId === prompt.id
+                      ? "Thinking..."
+                      : prompt.label}
                   </Text>
                 </Card>
               ))}
             </View>
-
-            <View style={{ gap: Space.md, marginTop: Space.lg }}>
-              {exchanges.map((ex, i) => (
-                <MotiView
-                  key={i}
-                  from={{ opacity: 0, translateY: 8 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                >
-                  <View style={{ alignSelf: "flex-end", maxWidth: "85%", marginBottom: Space.sm }}>
-                    <Card tint={theme.canopy} padded style={{ borderWidth: 0 }}>
-                      <Text variant="bodySm" color={theme.onCanopy}>{ex.prompt.question}</Text>
-                    </Card>
-                  </View>
-                  <View style={{ alignSelf: "flex-start", maxWidth: "92%" }}>
-                    <Card style={{ flexDirection: "row", gap: Space.sm }}>
-                      <Sparkles size={16} color={theme.gold} style={{ marginTop: 2 }} />
-                      <Text
-                        variant="bodySm"
-                        style={{
-                          flex: 1,
-                          lineHeight: 22,
-                        }}
-                      >
-                        {ex.answer}
-                      </Text>
-                    </Card>
-                  </View>
-                </MotiView>
-              ))}
-            </View>
           </MotiView>
         )}
+
+        {!loading && report ? (
+          <View style={{ width: "100%", gap: Space.md, marginTop: Space.lg }}>
+            {exchanges.map((ex) => (
+              <View key={ex.id} style={{ width: "100%" }}>
+                <View
+                  style={{
+                    alignSelf: "flex-end",
+                    maxWidth: "85%",
+                    marginBottom: Space.sm,
+                  }}
+                >
+                  <Card tint={theme.canopy} padded style={{ borderWidth: 0 }}>
+                    <Text variant="bodySm" color={theme.onCanopy}>
+                      {ex.prompt.question}
+                    </Text>
+                  </Card>
+                </View>
+                <View
+                  style={{
+                    alignSelf: "flex-start",
+                    width: "92%",
+                    backgroundColor: theme.canopyAlt,
+                    padding: Space.lg,
+                    borderRadius: 16,
+                    marginTop: Space.sm,
+                  }}
+                >
+                  <Sparkles size={16} color={theme.gold} />
+                  <Text
+                    variant="bodySm"
+                    color={theme.onCanopy}
+                    style={{ marginTop: Space.sm, flexShrink: 1 }}
+                  >
+                    {ex.answer}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        ) : null}
       </ScrollView>
     </View>
   );
