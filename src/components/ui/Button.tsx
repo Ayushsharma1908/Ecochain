@@ -1,14 +1,22 @@
-import React from 'react';
-import { ActivityIndicator, Pressable, View, type ViewStyle } from 'react-native';
-import { MotiView } from 'moti';
-import type { LucideIcon } from 'lucide-react-native';
-import { Radius, Shadow, Space } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { Text } from '@/components/ui/Text';
+import { Text } from "@/components/ui/Text";
+import { Radius, Shadow, Space } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import type { LucideIcon } from "lucide-react-native";
+import React from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  type ViewStyle,
+} from "react-native";
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft';
-export type ButtonSize = 'sm' | 'md' | 'lg';
-export type ButtonAccent = 'tint' | 'teal' | 'gold' | 'clay' | 'lichen';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "soft";
+export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonAccent = "tint" | "teal" | "gold" | "clay" | "lichen";
 
 export interface ButtonProps {
   label: string;
@@ -17,27 +25,56 @@ export interface ButtonProps {
   size?: ButtonSize;
   accent?: ButtonAccent;
   icon?: LucideIcon;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
   style?: ViewStyle;
 }
 
-const SIZE_MAP: Record<ButtonSize, { paddingV: number; paddingH: number; fontSize: number; iconSize: number }> = {
-  sm: { paddingV: 8, paddingH: 14, fontSize: 13, iconSize: 16 },
-  md: { paddingV: 13, paddingH: 20, fontSize: 15, iconSize: 18 },
-  lg: { paddingV: 17, paddingH: 26, fontSize: 16, iconSize: 20 },
+// ─── Size config ───
+const SIZE_MAP: Record<
+  ButtonSize,
+  {
+    paddingV: number;
+    paddingH: number;
+    fontFamily: string;
+    fontSize: number;
+    iconSize: number;
+  }
+> = {
+  sm: {
+    paddingV: Space.sm + 2,
+    paddingH: Space.lg,
+    fontFamily: "Archivo_600SemiBold",
+    fontSize: 13,
+    iconSize: 15,
+  },
+  md: {
+    paddingV: Space.md + 4,
+    paddingH: Space.xl,
+    fontFamily: "Archivo_600SemiBold",
+    fontSize: 15,
+    iconSize: 17,
+  },
+  lg: {
+    paddingV: Space.lg + 2,
+    paddingH: Space["2xl"],
+    fontFamily: "Archivo_600SemiBold",
+    fontSize: 17,
+    iconSize: 19,
+  },
 };
 
+// ─── Button ───
 export function Button({
   label,
   onPress,
-  variant = 'primary',
-  size = 'md',
-  accent = 'tint',
+  variant = "primary",
+  size = "md",
+  accent = "tint",
   icon: Icon,
-  iconPosition = 'left',
+  iconPosition = "left",
   disabled,
   loading,
   fullWidth,
@@ -45,33 +82,48 @@ export function Button({
 }: ButtonProps) {
   const theme = useTheme();
   const dims = SIZE_MAP[size];
-  const accentColor = accent === 'tint' ? theme.tint : theme[accent];
 
-  let backgroundColor = 'transparent';
-  let borderColor = 'transparent';
-  let textColor = theme.text;
-  let shadow = {};
+  // Resolve accent color — leaf green (#629D3C) is the primary CTA color
+  const accentColor = accent === "tint" ? theme.lichen : theme[accent];
+
+  let backgroundColor: string;
+  let borderColor: string;
+  let textColor: string;
+  let useShadow = false;
 
   switch (variant) {
-    case 'primary':
-      backgroundColor = accentColor;
-      textColor = theme.onCanopy;
-      shadow = Shadow.sm;
+    case "primary":
+      // Leaf green primary — vibrant and on-brand
+      backgroundColor = theme.lichen;
+      borderColor = "transparent";
+      textColor = "#FFFFFF";
+      useShadow = true;
       break;
-    case 'secondary':
-      backgroundColor = theme.canopy;
-      textColor = theme.onCanopy;
-      shadow = Shadow.sm;
+
+    case "secondary":
+      // Dark forest green secondary
+      backgroundColor = theme.lichenDark;
+      borderColor = "transparent";
+      textColor = "#FFFFFF";
+      useShadow = true;
       break;
-    case 'outline':
-      borderColor = theme.borderStrong;
-      textColor = theme.text;
+
+    case "outline":
+      backgroundColor = "transparent";
+      borderColor = theme.lichen;
+      textColor = theme.lichenDark;
       break;
-    case 'soft':
-      backgroundColor = `${accentColor}22`;
-      textColor = accentColor;
+
+    case "soft":
+      backgroundColor = theme.lichenMuted;
+      borderColor = "transparent";
+      textColor = theme.lichenDark;
       break;
-    case 'ghost':
+
+    case "ghost":
+    default:
+      backgroundColor = "transparent";
+      borderColor = "transparent";
       textColor = accentColor;
       break;
   }
@@ -82,50 +134,47 @@ export function Button({
       disabled={disabled || loading}
       style={({ pressed }) => [
         {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
           gap: Space.sm,
           paddingVertical: dims.paddingV,
           paddingHorizontal: dims.paddingH,
           borderRadius: Radius.pill,
           backgroundColor,
-          borderWidth: variant === 'outline' ? 1.3 : 0,
+          borderWidth: variant === "outline" ? 1.5 : 0,
           borderColor,
-          opacity: disabled ? 0.5 : pressed ? 0.85 : 1,
-          alignSelf: fullWidth ? 'stretch' : 'flex-start',
+          opacity: disabled ? 0.45 : pressed ? 0.82 : 1,
+          alignSelf: fullWidth ? "stretch" : "flex-start",
         },
-        shadow,
+        useShadow ? Shadow.md : undefined,
         style,
       ]}
     >
-      <MotiView
-        from={{ scale: 0.96, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'timing', duration: 180 }}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: Space.sm }}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color={textColor} />
-        ) : (
-          <>
-            {Icon && iconPosition === 'left' ? <Icon size={dims.iconSize} color={textColor} strokeWidth={2} /> : null}
-            <Text variant="button" color={textColor} style={{ fontSize: dims.fontSize }}>
-              {label}
-            </Text>
-            {Icon && iconPosition === 'right' ? <Icon size={dims.iconSize} color={textColor} strokeWidth={2} /> : null}
-          </>
-        )}
-      </MotiView>
+      {loading ? (
+        <ActivityIndicator size="small" color={textColor} />
+      ) : (
+        <>
+          {Icon && iconPosition === "left" && (
+            <Icon size={dims.iconSize} color={textColor} strokeWidth={2.2} />
+          )}
+          <Text variant={size === "lg" ? "buttonLg" : "button"} color={textColor}>
+            {label}
+          </Text>
+          {Icon && iconPosition === "right" && (
+            <Icon size={dims.iconSize} color={textColor} strokeWidth={2.2} />
+          )}
+        </>
+      )}
     </Pressable>
   );
 }
 
-/** A small circular icon-only button (used for back/close affordances). */
+// ─── IconButton ───
 export function IconButton({
   icon: Icon,
   onPress,
-  accent = 'tint',
+  accent = "tint",
   size = 40,
 }: {
   icon: LucideIcon;
@@ -134,26 +183,23 @@ export function IconButton({
   size?: number;
 }) {
   const theme = useTheme();
-  const accentColor = accent === 'tint' ? theme.tint : theme[accent];
+  const accentColor = accent === "tint" ? theme.lichen : theme[accent];
+
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: theme.card,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: pressed ? 0.8 : 1,
-        },
-        Shadow.sm,
-      ]}
+      hitSlop={12}
+      style={({ pressed }) => ({
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: pressed ? theme.lichenMuted : "transparent",
+        opacity: pressed ? 0.8 : 1,
+      })}
     >
-      <View>
-        <Icon size={size * 0.46} color={accentColor} strokeWidth={2} />
-      </View>
+      <Icon size={Math.round(size * 0.5)} color={accentColor} strokeWidth={2} />
     </Pressable>
   );
 }
