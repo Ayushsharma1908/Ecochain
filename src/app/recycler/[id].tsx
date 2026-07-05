@@ -14,6 +14,7 @@ import { ActivityIndicator, Linking, Pressable, View } from "react-native";
 
 import { Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { useTheme } from "@/hooks/use-theme";
 import {
   formatDistanceKm,
@@ -200,12 +201,19 @@ function NotFound() {
 // ─── Main screen ───
 export default function RecyclerDetailScreen() {
   const theme = useTheme();
+  const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [recycler, setRecycler] = useState<Recycler | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.replace({ pathname: "/login", params: { redirect: `/recycler/${id}` } });
+      return;
+    }
+    if (!isAuthenticated) return;
+
     (async () => {
       let location: {
         latitude: number;
@@ -233,9 +241,13 @@ export default function RecyclerDetailScreen() {
       }
       setLoading(false);
     })();
-  }, [id]);
+  }, [id, authLoading, isAuthenticated]);
 
   // ── Loading ──
+  if (!isAuthenticated) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
+
   if (loading) {
     return <LoadingScreen />;
   }

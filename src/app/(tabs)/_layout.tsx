@@ -1,6 +1,6 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import { BarChart3, Home, MapPin, ScanLine } from "lucide-react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -17,6 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Shadow, Space } from "@/constants/theme";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 
 /* ------------------------------------------------------------------ */
 /*  Config                                                             */
@@ -41,6 +42,7 @@ const BAR_MARGIN = (Space.lg ?? 20) + 8;
 /* ------------------------------------------------------------------ */
 
 function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
+  const { isAuthenticated, loading } = useAuthGate();
   const [barWidth, setBarWidth] = useState(0);
   const indicatorX = useSharedValue(0);
   const isFirst = useRef(true);
@@ -144,6 +146,11 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
             const focused = state.index === index;
 
             const onPress = () => {
+              if (route.name !== "index" && !isAuthenticated && !loading) {
+                router.push({ pathname: "/login", params: { redirect: `/(tabs)/${route.name}` } });
+                return;
+              }
+
               const event = navigation.emit({
                 type: "tabPress",
                 target: route.key,

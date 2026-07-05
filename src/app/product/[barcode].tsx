@@ -18,6 +18,7 @@ import { ScoreGauge } from "@/components/ui/ScoreGauge";
 import { Radius, Shadow, Space } from "@/constants/theme";
 import { useCurrentContext } from "@/context/CurrentContext";
 import { useScanHistory } from "@/context/ScanHistoryContext";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { useTheme } from "@/hooks/use-theme";
 import {
   fallbackProductForBarcode,
@@ -261,6 +262,7 @@ function LoadingScreen() {
 // ─── Main screen ───
 export default function ProductScreen() {
   const theme = useTheme();
+  const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { barcode } = useLocalSearchParams<{ barcode: string }>();
   const { addScan } = useScanHistory();
   const { set: setContext } = useCurrentContext();
@@ -277,6 +279,12 @@ export default function ProductScreen() {
   const savedRef = React.useRef(false);
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.replace({ pathname: "/login", params: { redirect: `/product/${barcode}` } });
+      return;
+    }
+    if (!isAuthenticated) return;
+
     let cancelled = false;
 
     async function run() {
@@ -348,7 +356,11 @@ export default function ProductScreen() {
 
     run();
     return () => { cancelled = true; };
-  }, [barcode, addScan, setContext]);
+  }, [barcode, addScan, setContext, authLoading, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   if (loading || !profile) {
     return <LoadingScreen />;

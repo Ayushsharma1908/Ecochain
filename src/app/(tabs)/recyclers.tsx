@@ -13,7 +13,8 @@ import {
 
 import { useTheme } from '@/hooks/use-theme';
 import { Space, Radius, Shadow } from '@/constants/theme';
-import { Text, EmptyState } from '@/components/ui';
+import { Text } from '@/components/ui';
+import { useAuthGate } from '@/hooks/use-auth-gate';
 import {
   getSeededRecyclers,
   haversineDistanceKm,
@@ -302,12 +303,19 @@ function LocationBanner({ theme }: { theme: any }) {
 // ─── Main screen ───
 export default function RecyclersScreen() {
   const theme = useTheme();
+  const { isAuthenticated, loading } = useAuthGate();
   const [location, setLocation] =
     useState<Location.LocationObjectCoords | null>(null);
   const [locationDenied, setLocationDenied] = useState(false);
   const [filter, setFilter] = useState<WasteTypeId | 'all'>('all');
 
   useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace({ pathname: '/login', params: { redirect: '/(tabs)/recyclers' } });
+      return;
+    }
+    if (!isAuthenticated) return;
+
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -323,7 +331,7 @@ export default function RecyclersScreen() {
         setLocationDenied(true);
       }
     })();
-  }, []);
+  }, [isAuthenticated, loading]);
 
   const recyclers = useMemo(
     () =>
@@ -347,6 +355,10 @@ export default function RecyclersScreen() {
       );
     });
   }, [recyclers, filter, location]);
+
+  if (!isAuthenticated) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   return (
     <FlatList

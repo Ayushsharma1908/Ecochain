@@ -15,6 +15,7 @@ import { FlatList, Pressable, View } from "react-native";
 import { Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
 import { useCurrentContext } from "@/context/CurrentContext";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { useTheme } from "@/hooks/use-theme";
 import { AI_PROMPTS, askAdvisor, generateAIReport } from "@/lib/aiAdvisor";
 import type { AIReport, AiPrompt } from "@/types/domain";
@@ -398,6 +399,7 @@ function NoContextView() {
 // ─── Main screen ───
 export default function AdvisorScreen() {
   const theme = useTheme();
+  const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { context } = useCurrentContext();
   const [report, setReport] = useState<AIReport | null>(null);
   const [loading, setLoading] = useState(false);
@@ -407,6 +409,11 @@ export default function AdvisorScreen() {
   const reportRequestKey = useRef<string | null>(null);
 
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) router.replace({ pathname: "/login", params: { redirect: "/advisor" } });
+  }, [authLoading, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
     if (!context) return;
 
     const requestKey = context.product.barcode;
@@ -430,7 +437,11 @@ export default function AdvisorScreen() {
     return () => {
       cancelled = true;
     };
-  }, [context]);
+  }, [context, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   const ask = async (prompt: AiPrompt) => {
     if (!context || requestLock.current || pendingPromptId) return;

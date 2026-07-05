@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { FontsToLoad } from "@/constants/theme";
+import { AuthProvider } from "@/context/AuthContext";
 import { CurrentContextProvider } from "@/context/CurrentContext";
 import { ScanHistoryProvider } from "@/context/ScanHistoryContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -61,6 +62,28 @@ function RootLayoutInner() {
             animationDuration: 200,
           }}
         />
+
+        <Stack.Screen
+          name="login"
+          options={{
+            presentation: "modal",
+            animation: "slide_from_bottom",
+            gestureEnabled: true,
+            gestureDirection: "vertical",
+            animationDuration: 260,
+          }}
+        />
+
+        <Stack.Screen
+          name="profile"
+          options={{
+            presentation: "modal",
+            animation: "slide_from_bottom",
+            gestureEnabled: true,
+            gestureDirection: "vertical",
+            animationDuration: 260,
+          }}
+        />
       </Stack>
     </View>
   );
@@ -86,11 +109,13 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ScanHistoryProvider>
-        <CurrentContextProvider>
-          <RootLayoutInner />
-        </CurrentContextProvider>
-      </ScanHistoryProvider>
+      <AuthProvider>
+        <ScanHistoryProvider>
+          <CurrentContextProvider>
+            <RootLayoutInner />
+          </CurrentContextProvider>
+        </ScanHistoryProvider>
+      </AuthProvider>
     </GestureHandlerRootView>
   );
 }

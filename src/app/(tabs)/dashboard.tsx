@@ -8,12 +8,13 @@ import {
   TrendingUp,
 } from "lucide-react-native";
 import { MotiView } from "moti";
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, Pressable, View } from "react-native";
 
 import { Button, LoopDiagram, Text, TrendChart } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
 import { useScanHistory } from "@/context/ScanHistoryContext";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { useTheme } from "@/hooks/use-theme";
 
 // ─── Single metric row inside the stats card ───
@@ -213,7 +214,16 @@ function DashboardEmpty() {
 // ─── Main dashboard ───
 export default function DashboardScreen() {
   const theme = useTheme();
+  const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { stats, history, clearHistory, loading } = useScanHistory();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) router.replace({ pathname: "/login", params: { redirect: "/(tabs)/dashboard" } });
+  }, [authLoading, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   if (!loading && history.length === 0) {
     return <DashboardEmpty />;

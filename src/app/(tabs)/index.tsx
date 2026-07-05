@@ -11,9 +11,11 @@ import { MotiView } from "moti";
 import React from "react";
 import { FlatList, Pressable, View } from "react-native";
 
+import { NavBar } from "@/components/nav-bar";
 import { Button, LoopDots, Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
 import { useScanHistory } from "@/context/ScanHistoryContext";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { useTheme } from "@/hooks/use-theme";
 import { scoreTier } from "@/lib/scoring";
 import { WASTE_TYPE_LABEL } from "@/lib/wasteMapping";
@@ -28,6 +30,7 @@ function greeting() {
 
 function ScanRow({ item, index }: { item: ScanRecord; index: number }) {
   const theme = useTheme();
+  const { requireAuth } = useAuthGate();
   const tier = scoreTier(item.scoreTotal);
 
   // Score pill color based on tier
@@ -42,7 +45,12 @@ function ScanRow({ item, index }: { item: ScanRecord; index: number }) {
       transition={{ delay: 200 + index * 70, type: "timing", duration: 350 }}
     >
       <Pressable
-        onPress={() => router.push(`/product/${item.barcode}`)}
+        onPress={() =>
+          requireAuth(
+            () => router.push(`/product/${item.barcode}`),
+            `/product/${item.barcode}`,
+          )
+        }
         style={({ pressed }) => ({
           flexDirection: "row",
           alignItems: "center",
@@ -159,10 +167,7 @@ function StatBlock({
       >
         {value}
         {unit && (
-          <Text
-            variant="bodySm"
-            style={{ color: theme.cardTextMuted }}
-          >
+          <Text variant="bodySm" style={{ color: theme.cardTextMuted }}>
             {" "}
             {unit}
           </Text>
@@ -181,6 +186,7 @@ function StatBlock({
 export default function HomeScreen() {
   const theme = useTheme();
   const { history, stats, loading } = useScanHistory();
+  const { requireAuth } = useAuthGate();
   const recent = history.slice(0, 3);
 
   return (
@@ -192,38 +198,20 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: Space.lg,
-          paddingTop: Space["4xl"],
+          paddingTop: Space.xl,
           paddingBottom: 150,
         }}
         ListHeaderComponent={
           <>
+            <NavBar />
+
             {/* ─── Greeting ─── */}
             <MotiView
               from={{ opacity: 0, translateY: -12 }}
               animate={{ opacity: 1, translateY: 0 }}
               transition={{ type: "timing", duration: 450 }}
+              style={{ marginTop: Space["3xl"] }}
             >
-              {/* Brand pill */}
-              <View
-                style={{
-                  alignSelf: "flex-start",
-                  paddingHorizontal: Space.md,
-                  paddingVertical: 5,
-                  borderRadius: Radius.pill,
-                  backgroundColor: theme.lichenDark,
-                  marginBottom: Space.lg,
-                  borderWidth: 1,
-                  borderColor: theme.lichen + "50",
-                }}
-              >
-                <Text
-                  variant="label"
-                  style={{ color: "#FDF5E4", letterSpacing: 1.6 }}
-                >
-                  ECOCHAIN LINK
-                </Text>
-              </View>
-
               <Text
                 style={{
                   fontFamily: "Fraunces_900Black",
@@ -252,7 +240,9 @@ export default function HomeScreen() {
               style={{ marginTop: Space["2xl"] }}
             >
               <Pressable
-                onPress={() => router.push("/(tabs)/scan")}
+                onPress={() =>
+                  requireAuth(() => router.push("/(tabs)/scan"), "/(tabs)/scan")
+                }
                 style={({ pressed }) => ({
                   borderRadius: Radius.xl,
                   backgroundColor: theme.lichenDark,
@@ -327,7 +317,12 @@ export default function HomeScreen() {
                   <Button
                     label="Open scanner"
                     icon={ScanLine}
-                    onPress={() => router.push("/(tabs)/scan")}
+                    onPress={() =>
+                      requireAuth(
+                        () => router.push("/(tabs)/scan"),
+                        "/(tabs)/scan",
+                      )
+                    }
                     style={{
                       backgroundColor: "#629D3C",
                     }}
@@ -387,7 +382,9 @@ export default function HomeScreen() {
               style={{ marginTop: Space.sm }}
             >
               <Pressable
-                onPress={() => router.push("/advisor")}
+                onPress={() =>
+                  requireAuth(() => router.push("/advisor"), "/advisor")
+                }
                 style={({ pressed }) => ({
                   flexDirection: "row",
                   alignItems: "center",
@@ -431,7 +428,11 @@ export default function HomeScreen() {
                     Alternatives, pickup points & value
                   </Text>
                 </View>
-                <ChevronRight size={16} color={theme.cardTextMuted} strokeWidth={2} />
+                <ChevronRight
+                  size={16}
+                  color={theme.cardTextMuted}
+                  strokeWidth={2}
+                />
               </Pressable>
             </MotiView>
 
@@ -456,7 +457,12 @@ export default function HomeScreen() {
               </Text>
               {history.length > 0 && (
                 <Pressable
-                  onPress={() => router.push("/(tabs)/dashboard")}
+                  onPress={() =>
+                    requireAuth(
+                      () => router.push("/(tabs)/dashboard"),
+                      "/(tabs)/dashboard",
+                    )
+                  }
                   style={({ pressed }) => ({
                     flexDirection: "row",
                     alignItems: "center",
@@ -467,7 +473,11 @@ export default function HomeScreen() {
                   <Text variant="monoSm" color={theme.lichenDark}>
                     View all
                   </Text>
-                  <ArrowRight size={12} color={theme.lichenDark} strokeWidth={2} />
+                  <ArrowRight
+                    size={12}
+                    color={theme.lichenDark}
+                    strokeWidth={2}
+                  />
                 </Pressable>
               )}
             </View>
@@ -529,7 +539,12 @@ export default function HomeScreen() {
                   <Button
                     label="Scan your first product"
                     icon={ScanLine}
-                    onPress={() => router.push("/(tabs)/scan")}
+                    onPress={() =>
+                      requireAuth(
+                        () => router.push("/(tabs)/scan"),
+                        "/(tabs)/scan",
+                      )
+                    }
                     fullWidth
                   />
                 </View>

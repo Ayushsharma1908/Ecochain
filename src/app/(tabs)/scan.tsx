@@ -17,6 +17,7 @@ import {
 
 import { Button, Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
+import { useAuthGate } from "@/hooks/use-auth-gate";
 import { useTheme } from "@/hooks/use-theme";
 
 /* ------------------------------------------------------------------ */
@@ -213,7 +214,7 @@ function ManualEntry({ onClose }: { onClose: () => void }) {
               lineHeight: 20,
             }}
           >
-            Useful when a package is damaged or the camera can't get a clean
+            Useful when a package is damaged or the camera cannot get a clean
             read.
           </Text>
         </MotiView>
@@ -232,7 +233,7 @@ function ManualEntry({ onClose }: { onClose: () => void }) {
             ref={inputRef}
             value={value}
             onChangeText={setValue}
-            placeholder="e.g. 3017620422003"
+            placeholder="e.g. 3017620422003 or Kissan Jam"
             placeholderTextColor={theme.textMuted}
             autoCapitalize="none"
             autoCorrect={false}
@@ -370,9 +371,14 @@ function PermissionView({
 
 export default function ScanScreen() {
   const theme = useTheme();
+  const { isAuthenticated, loading } = useAuthGate();
   const [permission, requestPermission] = useCameraPermissions();
   const [manualMode, setManualMode] = useState(false);
   const lockRef = useRef(false);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) router.replace({ pathname: "/login", params: { redirect: "/(tabs)/scan" } });
+  }, [isAuthenticated, loading]);
 
   const handleScanned = useCallback((result: BarcodeScanningResult) => {
     if (lockRef.current) return;
@@ -384,6 +390,7 @@ export default function ScanScreen() {
   }, []);
 
   /* ── Branch views ── */
+  if (!isAuthenticated) return <View style={{ flex: 1, backgroundColor: theme.background }} />;
   if (manualMode) return <ManualEntry onClose={() => setManualMode(false)} />;
   if (!permission)
     return <View style={{ flex: 1, backgroundColor: theme.background }} />;
