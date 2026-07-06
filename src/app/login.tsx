@@ -40,7 +40,7 @@ export default function LoginScreen() {
     if (redirect) {
       router.replace(redirect as any);
     } else {
-      router.back();
+      router.replace("/(tabs)");
     }
   };
 
@@ -58,7 +58,7 @@ export default function LoginScreen() {
         }}
       >
         <View style={{ alignItems: "flex-end" }}>
-          <IconButton icon={X} onPress={() => router.back()} />
+          <IconButton icon={X} onPress={() => router.replace("/(tabs)")} />
         </View>
 
         <MotiView

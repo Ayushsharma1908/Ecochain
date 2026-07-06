@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import { LogOut, Mail, User, X } from "lucide-react-native";
 import React from "react";
@@ -8,7 +9,29 @@ import { Radius, Shadow, Space } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
 
-const AVATAR_COLORS = ["#629D3C", "#1A8A7A", "#D4952A", "#C05B3A", "#1E8A55", "#7EC24A", "#B07A1E", "#126057"];
+const AVATAR_COLORS = [
+  "#629D3C",
+  "#1A8A7A",
+  "#D4952A",
+  "#C05B3A",
+  "#1E8A55",
+  "#7EC24A",
+  "#B07A1E",
+  "#126057",
+];
+
+// Avatar image map — images 1–9 must be placed in assets/images/avatars/
+const AVATAR_IMAGES = [
+  require("../../assets/images/avatars/avatar_1.png"),
+  require("../../assets/images/avatars/avatar_2.png"),
+  require("../../assets/images/avatars/avatar_3.png"),
+  require("../../assets/images/avatars/avatar_4.png"),
+  require("../../assets/images/avatars/avatar_5.png"),
+  require("../../assets/images/avatars/avatar_6.png"),
+  require("../../assets/images/avatars/avatar_7.png"),
+  require("../../assets/images/avatars/avatar_8.png"),
+  require("../../assets/images/avatars/avatar_9.png"),
+];
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -16,13 +39,24 @@ export default function ProfileScreen() {
 
   const logout = async () => {
     await signOut();
-    router.back();
+    router.replace("/login");
   };
 
+  const avatarSource = user
+    ? AVATAR_IMAGES[user.avatarSeed % AVATAR_IMAGES.length]
+    : null;
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={{ padding: Space.lg, paddingTop: Space.xl, paddingBottom: Space["4xl"] }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.background }}
+      contentContainerStyle={{
+        padding: Space.lg,
+        paddingTop: Space.xl,
+        paddingBottom: Space["4xl"],
+      }}
+    >
       <View style={{ alignItems: "flex-end" }}>
-        <IconButton icon={X} onPress={() => router.back()} />
+        <IconButton icon={X} onPress={() => router.replace("/")} />
       </View>
 
       <View style={{ alignItems: "center", marginTop: Space.lg }}>
@@ -31,19 +65,43 @@ export default function ProfileScreen() {
             width: 96,
             height: 96,
             borderRadius: Radius.pill,
-            backgroundColor: AVATAR_COLORS[(user?.avatarSeed ?? 0) % AVATAR_COLORS.length],
+            backgroundColor:
+              AVATAR_COLORS[(user?.avatarSeed ?? 0) % AVATAR_COLORS.length],
             alignItems: "center",
             justifyContent: "center",
             borderWidth: 4,
             borderColor: "rgba(255,255,255,0.72)",
+            overflow: "hidden",
             ...Shadow.lg,
           }}
         >
-          <Text style={{ fontFamily: "Archivo_800ExtraBold", fontSize: 34, color: "#FFFFFF" }}>
-            {(user?.name ?? "Eco User").charAt(0).toUpperCase()}
-          </Text>
+          {avatarSource ? (
+            <Image
+              source={avatarSource}
+              style={{ width: 96, height: 96 }}
+              contentFit="cover"
+            />
+          ) : (
+            <Text
+              style={{
+                fontFamily: "Archivo_800ExtraBold",
+                fontSize: 34,
+                color: "#FFFFFF",
+              }}
+            >
+              {(user?.name ?? "Eco User").charAt(0).toUpperCase()}
+            </Text>
+          )}
         </View>
-        <Text style={{ fontFamily: "Fraunces_900Black", fontSize: 30, lineHeight: 36, color: theme.text, marginTop: Space.lg }}>
+        <Text
+          style={{
+            fontFamily: "Fraunces_900Black",
+            fontSize: 30,
+            lineHeight: 36,
+            color: theme.text,
+            marginTop: Space.lg,
+          }}
+        >
           {user?.name ?? "Eco User"}
         </Text>
         <Text variant="bodySm" color={theme.textMuted} style={{ marginTop: 4 }}>
@@ -63,14 +121,20 @@ export default function ProfileScreen() {
           ...Shadow.md,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: Space.md }}>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", gap: Space.md }}
+        >
           <User size={18} color={theme.lichen} />
           <Text variant="body" style={{ color: theme.cardText, flex: 1 }}>
             {user?.name ?? "Eco User"}
           </Text>
         </View>
-        <View style={{ height: 1, backgroundColor: "rgba(255,255,255,0.10)" }} />
-        <View style={{ flexDirection: "row", alignItems: "center", gap: Space.md }}>
+        <View
+          style={{ height: 1, backgroundColor: "rgba(255,255,255,0.10)" }}
+        />
+        <View
+          style={{ flexDirection: "row", alignItems: "center", gap: Space.md }}
+        >
           <Mail size={18} color={theme.gold} />
           <Text variant="body" style={{ color: theme.cardText, flex: 1 }}>
             {user?.email ?? "Not signed in"}
@@ -79,7 +143,14 @@ export default function ProfileScreen() {
       </View>
 
       <View style={{ marginTop: Space["3xl"] }}>
-        <Button label="Sign out" icon={LogOut} accent="clay" variant="outline" fullWidth onPress={logout} />
+        <Button
+          label="Sign out"
+          icon={LogOut}
+          accent="clay"
+          variant="outline"
+          fullWidth
+          onPress={logout}
+        />
       </View>
     </ScrollView>
   );

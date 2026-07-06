@@ -10,6 +10,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -46,6 +47,7 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
   const [barWidth, setBarWidth] = useState(0);
   const indicatorX = useSharedValue(0);
   const isFirst = useRef(true);
+  const insets = useSafeAreaInsets();
 
   const tabW = barWidth / 4;
   const pillOffset = Math.round((tabW - PILL_WIDTH) / 2);
@@ -85,7 +87,7 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
         position: "absolute",
         left: BAR_MARGIN,
         right: BAR_MARGIN,
-        bottom: Platform.select({ ios: 28, android: 22, default: 16 }),
+        bottom: Math.max(insets.bottom, 16) + 4,
         borderRadius: 28,
         overflow: "hidden",
         ...Shadow.lg,
@@ -100,7 +102,7 @@ function AnimatedTabBar({ state, navigation }: BottomTabBarProps) {
       }}
     >
       <BlurView
-        intensity={100}
+        intensity={90}
         tint="dark"
         style={{
           height: BAR_HEIGHT,

@@ -1,3 +1,4 @@
+import { HomeSkeleton } from "@/components/HomeSkeleton";
 import { router } from "expo-router";
 import {
   ArrowRight,
@@ -20,6 +21,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { scoreTier } from "@/lib/scoring";
 import { WASTE_TYPE_LABEL } from "@/lib/wasteMapping";
 import type { ScanRecord } from "@/types/domain";
+import { useEffect, useState } from "react";
 
 function greeting() {
   const hour = new Date().getHours();
@@ -188,6 +190,19 @@ export default function HomeScreen() {
   const { history, stats, loading } = useScanHistory();
   const { requireAuth } = useAuthGate();
   const recent = history.slice(0, 3);
+  const [showSkeleton, setShowSkeleton] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSkeleton(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSkeleton) {
+    return <HomeSkeleton />;
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -198,7 +213,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: Space.lg,
-          paddingTop: Space.xl,
+          paddingTop: Space.xs,
           paddingBottom: 150,
         }}
         ListHeaderComponent={

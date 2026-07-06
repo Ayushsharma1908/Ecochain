@@ -2,10 +2,11 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { SplashOverlay } from "@/components/SplashOverlay";
 import { FontsToLoad } from "@/constants/theme";
 import { AuthProvider } from "@/context/AuthContext";
 import { CurrentContextProvider } from "@/context/CurrentContext";
@@ -13,7 +14,7 @@ import { ScanHistoryProvider } from "@/context/ScanHistoryContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useTheme } from "@/hooks/use-theme";
 
-// Keep splash visible until we're ready
+// Keep native splash visible until we're ready to show in-app overlay
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootLayoutInner() {
@@ -92,20 +93,17 @@ function RootLayoutInner() {
 export default function RootLayout() {
   useColorScheme(); // subscribe to changes — triggers re-render
   const [fontsLoaded, fontError] = useFonts(FontsToLoad);
-
-  const onLayoutReady = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
+  const [fontsReady, setFontsReady] = useState(false);
 
   useEffect(() => {
-    onLayoutReady();
-  }, [onLayoutReady]);
-
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
+    if (fontsLoaded || fontError) {
+      // Hide the native OS splash — the in-app SplashOverlay takes over seamlessly
+      SplashScreen.hideAsync().catch(() => {});
+      // Brief delay so the OS splash and in-app overlay don't overlap awkwardly
+      const timer = setTimeout(() => setFontsReady(true), 80);
+      return () => clearTimeout(timer);
+    }
+  }, [fontsLoaded, fontError]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -116,6 +114,9 @@ export default function RootLayout() {
           </CurrentContextProvider>
         </ScanHistoryProvider>
       </AuthProvider>
+
+      {/* In-app animated splash — sits above everything, unmounts after exit animation */}
+      <SplashOverlay visible={!fontsReady} />
     </GestureHandlerRootView>
   );
 }
