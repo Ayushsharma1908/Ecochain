@@ -564,6 +564,7 @@ export function AdvisorIllustration({ size = 160 }: { size?: number }) {
         <Circle cx="146" cy="130" r="2" fill={theme.lichen} opacity={0.2} />
         <Circle cx="70" cy="60" r="2" fill={theme.gold} opacity={0.2} />
       </Svg>
+      <svg></svg>
     </View>
   );
 }

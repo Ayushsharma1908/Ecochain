@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { LogIn } from "lucide-react-native";
 import React from "react";
 import { Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
@@ -49,6 +50,7 @@ function Avatar({ seed }: { seed: number }) {
 export function NavBar() {
   const theme = useTheme();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   return (
     <View
@@ -56,22 +58,24 @@ export function NavBar() {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingVertical: Space.sm,
-        gap: Space.md,
+        paddingTop: insets.top + 10,
+        paddingHorizontal: Space.md,
+        paddingBottom: Space.sm,
+        gap: Space.sm,
       }}
     >
+      {/* Left section — Logo & Name */}
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
           gap: Space.sm,
-          flexShrink: 1,
         }}
       >
         <View
           style={{
-            width: 42,
-            height: 42,
+            width: 40,
+            height: 40,
             borderRadius: Radius.md,
             backgroundColor: theme.card,
             alignItems: "center",
@@ -88,27 +92,27 @@ export function NavBar() {
             contentFit="contain"
           />
         </View>
-        <View style={{ flexShrink: 1 }}>
+        <View>
           <Text
+            numberOfLines={1}
+            allowFontScaling={false}
+            adjustsFontSizeToFit
+            minimumFontScale={0.9}
             style={{
-              fontFamily: "Fraunces_900Black",
-              fontSize: 20,
-              lineHeight: 24,
               color: theme.text,
             }}
-            numberOfLines={1}
           >
             EcoChain
           </Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            {/* <Leaf size={10} color={theme.lichen} /> */}
-            <Text variant="monoSm" color={theme.textMuted} numberOfLines={1}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Text variant="monoSm" color={theme.textMuted} numberOfLines={1} allowFontScaling={false}>
               Link
             </Text>
           </View>
         </View>
       </View>
 
+      {/* Right section — Profile / Login */}
       {user ? (
         <Pressable
           onPress={() => router.push("/profile")}
@@ -118,12 +122,17 @@ export function NavBar() {
           <Avatar seed={user.avatarSeed} />
         </Pressable>
       ) : (
-        <Button
-          label="Login"
-          icon={LogIn}
-          size="sm"
-          onPress={() => router.push("/login")}
-        />
+        <View>
+          <Button
+            label="Login"
+            icon={LogIn}
+            size="sm"
+            onPress={() => router.push("/login")}
+            style={{
+              minWidth: 120,
+            }}
+          />
+        </View>
       )}
     </View>
   );
