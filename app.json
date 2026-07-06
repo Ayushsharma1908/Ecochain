@@ -4,12 +4,11 @@
     "slug": "ecochain-link",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/ecochain-icon.png",
     "scheme": "ecochainlink",
     "userInterfaceStyle": "automatic",
-    "backgroundColor": "#ECE6D3",
+    "backgroundColor": "#F2E3BC",
     "ios": {
-      "icon": "./assets/expo.icon",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "EcoChain Link uses your camera to scan product barcodes on-device. Nothing is recorded or uploaded.",
@@ -18,29 +17,27 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#152D26",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/ecochain-icon.png",
+        "backgroundColor": "#F2E3BC"
       },
       "predictiveBackGestureEnabled": false,
       "permissions": ["CAMERA", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/ecochain-icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#152D26",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 120,
+          "backgroundColor": "#F2E3BC",
+          "image": "./assets/images/ecochain-icon.png",
+          "imageWidth": 180,
           "android": {
-            "image": "./assets/images/splash-icon.png",
-            "imageWidth": 76
+            "image": "./assets/images/ecochain-icon.png",
+            "imageWidth": 140
           }
         }
       ],
@@ -63,3 +60,4 @@
     }
   }
 }
+
