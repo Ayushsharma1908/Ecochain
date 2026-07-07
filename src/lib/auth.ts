@@ -32,6 +32,30 @@ export function createAuthUser(email: string, provider: AuthProvider, name?: str
   };
 }
 
+/**
+ * Create an AuthUser from a real Google / Firebase sign-in response.
+ * The `uid` is the stable Firebase UID — used as the user's persistent ID.
+ */
+export function createGoogleAuthUser(
+  uid: string,
+  email: string,
+  name: string | null,
+  photoURL: string | null,
+): AuthUser {
+  const cleanEmail = email.trim().toLowerCase();
+  const displayName = name?.trim() || nameFromEmail(cleanEmail);
+
+  return {
+    id: uid,
+    email: cleanEmail,
+    name: displayName,
+    provider: "google",
+    photoURL: photoURL ?? undefined,
+    avatarSeed: hash(cleanEmail || uid) % AVATAR_SEED_COUNT,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export async function loadAuthUser(): Promise<AuthUser | null> {
   try {
     const raw = await AsyncStorage.getItem(AUTH_STORAGE_KEY);

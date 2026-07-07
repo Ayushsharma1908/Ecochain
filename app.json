@@ -8,20 +8,28 @@
     "scheme": "ecochainlink",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#F2E3BC",
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSCameraUsageDescription": "EcoChain Link uses your camera to scan product barcodes on-device. Nothing is recorded or uploaded.",
-        "NSLocationWhenInUseUsageDescription": "EcoChain Link uses your location to find and sort nearby recyclers and collection points by distance."
-      }
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ecochain-icon.png",
         "backgroundColor": "#F2E3BC"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["CAMERA", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "CAMERA",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.ayushsharma1908.ecochainlink",
+      "googleServicesFile": "./google-services.json"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ayushsharma1908.ecochainlink",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSCameraUsageDescription": "EcoChain Link uses your camera to scan product barcodes on-device. Nothing is recorded or uploaded.",
+        "NSLocationWhenInUseUsageDescription": "EcoChain Link uses your location to find and sort nearby recyclers and collection points by distance."
+      }
     },
     "web": {
       "output": "single",
@@ -29,6 +37,7 @@
     },
     "plugins": [
       "expo-router",
+      "@react-native-google-signin/google-signin",
       [
         "expo-splash-screen",
         {
@@ -60,4 +69,3 @@
     }
   }
 }
-

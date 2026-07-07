@@ -1,13 +1,20 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 import { clearAuthUser, createAuthUser, loadAuthUser, saveAuthUser } from "@/lib/auth";
+import { signInWithGoogleNative, signOutGoogle } from "@/lib/googleAuth";
 import type { AuthUser } from "@/types/auth";
 
 interface AuthContextState {
   user: AuthUser | null;
   loading: boolean;
   signInWithEmail: (email: string, name?: string) => Promise<AuthUser>;
-  signInWithGoogle: () => Promise<AuthUser>;
+  /**
+   * Opens the native Google account picker and signs in via Firebase.
+   *
+   * Returns the signed-in user, or `null` if the user cancelled.
+   * Throws an `Error` (with a `.message` safe to display) on failure.
+   */
+  signInWithGoogle: () => Promise<AuthUser | null>;
   signOut: () => Promise<void>;
 }
 
@@ -35,14 +42,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [persistUser]
   );
 
-  const signInWithGoogle = useCallback(
-    async () => persistUser(createAuthUser("google.user@ecochain.local", "google", "Google User")),
-    [persistUser]
-  );
+  const signInWithGoogle = useCallback(async () => {
+    // signInWithGoogleNative returns null when user cancels, throws on error
+    const googleUser = await signInWithGoogleNative();
+    if (!googleUser) return null;
+    return persistUser(googleUser);
+  }, [persistUser]);
 
   const signOut = useCallback(async () => {
     await clearAuthUser();
     setUser(null);
+    // Sign out from Google + Firebase in the background (best-effort)
+    signOutGoogle().catch(() => {});
   }, []);
 
   const value = useMemo(

@@ -1,11 +1,4 @@
-/**
- * HomeSkeleton — a shimmer placeholder that mirrors the home screen layout.
- * Shows for 2 seconds on first app open, then fades out to reveal real content.
- *
- * Colors follow the EcoChain beige × forest-green design system:
- *   - Light mode: warm beige shimmer on the background
- *   - Dark mode:  muted forest-green shimmer
- */
+
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
 import React from "react";
@@ -15,7 +8,6 @@ import { NavBar } from "@/components/nav-bar";
 import { Radius, Space } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
-// Skeleton color sets — blends with each theme surface
 function useSkeletonColors() {
   const theme = useTheme();
   const isDark = theme.scheme === "dark";
@@ -26,7 +18,6 @@ function useSkeletonColors() {
       (["#EDE0C4", "#F7EDD6", "#EDE0C4"] as [string, ...string[]]);
 }
 
-/** A single shimmer block */
 function Shimmer({
   width,
   height,
@@ -67,22 +58,19 @@ export function HomeSkeleton() {
           flex: 1,
         }}
       >
-        {/* ── NavBar ── */}
+        
         <NavBar />
 
-        {/* ── Greeting text ── */}
         <View style={{ marginTop: Space["3xl"], gap: Space.sm }}>
           <Shimmer width="55%" height={34} radius={10} />
           <Shimmer width="80%" height={18} radius={8} />
           <Shimmer width="60%" height={18} radius={8} />
         </View>
 
-        {/* ── Scan Hero card ── */}
         <View style={{ marginTop: Space["2xl"] }}>
           <Shimmer width="100%" height={160} radius={Radius.xl} />
         </View>
 
-        {/* ── Stats row ── */}
         <View
           style={{
             flexDirection: "row",
@@ -94,12 +82,10 @@ export function HomeSkeleton() {
           <Shimmer width="48%" height={100} radius={Radius.lg} />
         </View>
 
-        {/* ── AI Advisor row ── */}
         <View style={{ marginTop: Space.sm }}>
           <Shimmer width="100%" height={64} radius={Radius.lg} />
         </View>
 
-        {/* ── Recent scans header ── */}
         <View
           style={{
             flexDirection: "row",
@@ -112,7 +98,6 @@ export function HomeSkeleton() {
           <Shimmer width="18%" height={18} radius={8} />
         </View>
 
-        {/* ── Scan list rows ── */}
         {[0, 1, 2].map((i) => (
           <View key={i} style={{ marginBottom: Space.sm }}>
             <Shimmer width="100%" height={66} radius={Radius.lg} />

@@ -3,19 +3,7 @@ import React from "react";
 import { View } from "react-native";
 import Svg, { Circle, Ellipse, G, Line, Path, Rect } from "react-native-svg";
 
-/**
- * EcoLink illustrations — hand-drawn SVG, organic and nature-forward.
- *
- * All illustrations follow the same visual language:
- *  - Soft colored circle as background wash
- *  - Layered depth with overlapping shapes
- *  - At least one leaf or plant motif
- *  - Organic curves, no harsh rectangles where avoidable
- *  - Small decorative accents (dots, arcs) for visual richness
- */
 
-// ─── Scan Illustration ───
-// A phone with a barcode and a leaf sprouting from it
 export function ScanIllustration({ size = 160 }: { size?: number }) {
   const theme = useTheme();
   return (
@@ -149,17 +137,13 @@ export function ScanIllustration({ size = 160 }: { size?: number }) {
   );
 }
 
-// ─── Map Pin Illustration ───
-// A location pin with a small plant growing from the top
 export function MapPinIllustration({ size = 160 }: { size?: number }) {
   const theme = useTheme();
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size} viewBox="0 0 200 200">
-        {/* Background wash */}
         <Circle cx="100" cy="100" r="92" fill={theme.tealSoft} opacity={0.5} />
 
-        {/* Ripple rings */}
         <Circle
           cx="100"
           cy="118"
