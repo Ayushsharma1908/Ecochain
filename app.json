@@ -10,7 +10,7 @@
     "backgroundColor": "#F2E3BC",
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/ecochain-icon.png",
+        "foregroundImage": "./assets/images/android-icon-foreground-padded.png",
         "backgroundColor": "#F2E3BC"
       },
       "predictiveBackGestureEnabled": false,
@@ -41,13 +41,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#F2E3BC",
-          "image": "./assets/images/ecochain-icon.png",
-          "imageWidth": 180,
-          "android": {
-            "image": "./assets/images/ecochain-icon.png",
-            "imageWidth": 140
-          }
+          "backgroundColor": "#F2E3BC"
         }
       ],
       [
