@@ -4,11 +4,13 @@ import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
 
 // Peach background — matches app.json splash backgroundColor
 const SPLASH_BG = "#F2E3BC";
-// Minimum time to hold the splash (ms) — gives the logo animation room to breathe
-const MIN_DISPLAY_MS = 2000;
+
+// Minimum time the animated splash stays visible (ms).
+// The logo entrance animation is 900 ms + text fades start at 350/600 ms,
+// so 1400 ms ensures the whole sequence plays through before dismissing.
+const MIN_DISPLAY_MS = 1400;
 
 const { width: SCREEN_W } = Dimensions.get("window");
-const LOGO_SIZE = Math.min(SCREEN_W * 0.54, 230);
 
 interface SplashOverlayProps {
   /** Flip to false when fonts/resources are ready; overlay plays its exit then unmounts. */
@@ -20,7 +22,7 @@ export function SplashOverlay({ visible }: SplashOverlayProps) {
   const [canDismiss, setCanDismiss] = useState(false);
   const [mounted, setMounted] = useState(true);
 
-  // Enforce minimum 2-second display, regardless of how fast fonts load
+  // Enforce minimum display so the entrance animation finishes before exit begins
   useEffect(() => {
     const elapsed = Date.now() - mountTime.current;
     const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
@@ -28,7 +30,7 @@ export function SplashOverlay({ visible }: SplashOverlayProps) {
     return () => clearTimeout(t);
   }, []);
 
-  // Only start the exit sequence once both: visible=false AND min time elapsed
+  // Only exit once fonts are ready AND the min animation time has elapsed
   const shouldShow = visible || !canDismiss;
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export function SplashOverlay({ visible }: SplashOverlayProps) {
       />
 
       <View style={styles.center}>
-        {/* Logo */}
+        {/* Logo — curved card (borderRadius: 28 clips to rounded rectangle) */}
         <MotiView
           from={{
             opacity: 0,
