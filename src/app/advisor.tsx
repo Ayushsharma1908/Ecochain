@@ -11,6 +11,7 @@ import {
 import { MotiView } from "moti";
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
@@ -302,6 +303,7 @@ function ChatBubble({
 // ─── Empty state (no context) ───
 function NoContextView() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <View
@@ -309,7 +311,7 @@ function NoContextView() {
           flexDirection: "row",
           alignItems: "center",
           paddingHorizontal: Space.lg,
-          paddingTop: 56,
+          paddingTop: insets.top + Space.sm,
           paddingBottom: Space.sm,
         }}
       >
@@ -401,6 +403,7 @@ export default function AdvisorScreen() {
   const theme = useTheme();
   const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { context } = useCurrentContext();
+  const insets = useSafeAreaInsets();
   const [report, setReport] = useState<AIReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [exchanges, setExchanges] = useState<ChatExchange[]>([]);
@@ -499,7 +502,7 @@ export default function AdvisorScreen() {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  paddingTop: 56,
+                  paddingTop: insets.top + Space.sm,
                   paddingBottom: Space.lg,
                 }}
               >

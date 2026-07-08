@@ -12,6 +12,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import EcoChainLogo from "@/assets/images/echochain.svg";
 import { Button, IconButton, Text } from "@/components/ui";
@@ -27,6 +28,7 @@ export default function LoginScreen() {
   const theme = useTheme();
   const { redirect } = useLocalSearchParams<{ redirect?: string }>();
   const { signInWithEmail, signInWithGoogle } = useAuth();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [loadingProvider, setLoadingProvider] = useState<"email" | "google" | null>(null);
@@ -95,7 +97,7 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           padding: Space.lg,
-          paddingTop: Space.xl,
+          paddingTop: Math.max(insets.top, 16) + Space.sm,
           paddingBottom: Space["4xl"],
         }}
       >

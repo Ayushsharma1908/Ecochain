@@ -11,6 +11,7 @@ import {
 import { MotiView } from "moti";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
@@ -124,6 +125,7 @@ function LoadingScreen() {
 // ─── Not found state ───
 function NotFound() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <View
@@ -131,7 +133,7 @@ function NotFound() {
           flexDirection: "row",
           alignItems: "center",
           paddingHorizontal: Space.lg,
-          paddingTop: 56,
+          paddingTop: insets.top + Space.sm,
           paddingBottom: Space.lg,
         }}
       >
@@ -203,6 +205,7 @@ export default function RecyclerDetailScreen() {
   const theme = useTheme();
   const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const insets = useSafeAreaInsets();
   const [recycler, setRecycler] = useState<Recycler | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -274,7 +277,7 @@ export default function RecyclerDetailScreen() {
       <View
         style={{
           paddingHorizontal: Space.lg,
-          paddingTop: 56,
+          paddingTop: insets.top + Space.sm,
           paddingBottom: Space.sm,
         }}
       >

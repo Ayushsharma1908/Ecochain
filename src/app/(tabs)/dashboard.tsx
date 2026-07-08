@@ -18,6 +18,7 @@ import {
   Pressable,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, LoopDiagram, Text, TrendChart } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
@@ -389,9 +390,10 @@ function EcoTipCard({ delay = 0 }: { delay?: number }) {
 // ─── Empty state ───
 function DashboardEmpty() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <View style={{ paddingTop: Space["4xl"], paddingHorizontal: Space.lg }}>
+      <View style={{ paddingTop: insets.top + Space.xl, paddingHorizontal: Space.lg }}>
         <MotiView
           from={{ opacity: 0, translateY: -10 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -499,6 +501,7 @@ export default function DashboardScreen() {
   const theme = useTheme();
   const { isAuthenticated, loading: authLoading } = useAuthGate();
   const { stats, history, clearHistory, loading } = useScanHistory();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.replace({ pathname: "/login", params: { redirect: "/(tabs)/dashboard" } });
@@ -520,7 +523,7 @@ export default function DashboardScreen() {
       style={{ backgroundColor: theme.background }}
       contentContainerStyle={{
         paddingHorizontal: Space.lg,
-        paddingTop: Space["4xl"],
+        paddingTop: insets.top + Space.xl,
         paddingBottom: 150,
       }}
       ListHeaderComponent={

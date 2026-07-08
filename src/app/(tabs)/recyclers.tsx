@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { MotiView } from 'moti';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   ChevronRight,
   Locate,
@@ -304,6 +305,7 @@ function LocationBanner({ theme }: { theme: any }) {
 export default function RecyclersScreen() {
   const theme = useTheme();
   const { isAuthenticated, loading } = useAuthGate();
+  const insets = useSafeAreaInsets();
   const [location, setLocation] =
     useState<Location.LocationObjectCoords | null>(null);
   const [locationDenied, setLocationDenied] = useState(false);
@@ -368,7 +370,7 @@ export default function RecyclersScreen() {
       style={{ backgroundColor: theme.background }}
       contentContainerStyle={{
         paddingHorizontal: Space.lg,
-        paddingTop: Space['4xl'],
+        paddingTop: insets.top + Space.xl,
         paddingBottom: 150,
       }}
       ListHeaderComponent={

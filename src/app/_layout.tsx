@@ -99,9 +99,8 @@ export default function RootLayout() {
     if (fontsLoaded || fontError) {
       // Hide the native OS splash — the in-app SplashOverlay takes over seamlessly
       SplashScreen.hideAsync().catch(() => {});
-      // Brief delay so the OS splash and in-app overlay don't overlap awkwardly
-      const timer = setTimeout(() => setFontsReady(true), 80);
-      return () => clearTimeout(timer);
+      // Set ready immediately; SplashOverlay handles its own exit animation
+      setFontsReady(true);
     }
   }, [fontsLoaded, fontError]);
 

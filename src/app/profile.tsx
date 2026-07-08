@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { LogOut, Mail, User, X } from "lucide-react-native";
 import React from "react";
 import { ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, IconButton, Text } from "@/components/ui";
 import { Radius, Shadow, Space } from "@/constants/theme";
@@ -36,6 +37,7 @@ const AVATAR_IMAGES = [
 export default function ProfileScreen() {
   const theme = useTheme();
   const { user, signOut } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const logout = async () => {
     await signOut();
@@ -51,7 +53,7 @@ export default function ProfileScreen() {
       style={{ flex: 1, backgroundColor: theme.background }}
       contentContainerStyle={{
         padding: Space.lg,
-        paddingTop: Space.xl,
+        paddingTop: Math.max(insets.top, 16) + Space.sm,
         paddingBottom: Space["4xl"],
       }}
     >
