@@ -1,37 +1,26 @@
-/**
- * Google Sign-In service for EcoChain Link.
- *
- * Flow:
- *   1. GoogleSignin.signIn()   → opens native Google account picker
- *   2. idToken extracted       → exchanged with Firebase Auth
- *   3. Firebase returns uid / profile
- *   4. We map to AuthUser and return it — caller persists via saveAuthUser()
- *
- * Requires a development build (Expo Go is NOT supported).
- *
- * Prerequisites:
- *   • EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID set in .env
- *   • google-services.json in project root (Android)
- *   • Firebase Console: Authentication → Google provider enabled
- */
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
-import { GoogleAuthProvider, signInWithCredential, signOut as firebaseSignOut } from "firebase/auth";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+import {
+  signOut as firebaseSignOut,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
 
 import { createGoogleAuthUser } from "@/lib/auth";
 import { firebaseAuth } from "@/lib/firebase";
 import type { AuthUser } from "@/types/auth";
 
-// --------------------------------------------------------------------------
-// One-time configuration — idempotent, safe to call multiple times.
-// --------------------------------------------------------------------------
 let _configured = false;
 
 function ensureConfigured() {
   if (_configured) return;
   GoogleSignin.configure({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? "",
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID!,
     // Request offline access so Firebase can refresh tokens server-side if needed
     offlineAccess: false,
+    forceCodeForRefreshToken: false,
   });
   _configured = true;
 }
@@ -63,30 +52,19 @@ function mapGoogleError(error: unknown): string {
   return "Google Sign-In failed. Please try again.";
 }
 
-// --------------------------------------------------------------------------
-// Public API
-// --------------------------------------------------------------------------
-
-/**
- * Open the native Google account picker, exchange the credential with
- * Firebase, then return the mapped AuthUser.
- *
- * Throws a `GoogleAuthError` (with a `.message` safe to show to the user)
- * on failure, or silently returns `null` when the user cancels.
- */
 export async function signInWithGoogleNative(): Promise<AuthUser | null> {
   ensureConfigured();
 
   try {
     // 1. Native Google sign-in
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    await GoogleSignin.signOut().catch(() => {});
     const signInResult = await GoogleSignin.signIn();
 
     // 2. Get the ID token
     // The shape changed in v13 — idToken lives at the top level.
     const idToken =
-      (signInResult as any).data?.idToken ??
-      (signInResult as any).idToken;
+      (signInResult as any).data?.idToken ?? (signInResult as any).idToken;
 
     if (!idToken) {
       throw new Error("No ID token returned from Google Sign-In.");
@@ -104,15 +82,17 @@ export async function signInWithGoogleNative(): Promise<AuthUser | null> {
       firebaseUser.displayName,
       firebaseUser.photoURL,
     );
-  } catch (error: unknown) {
+  } catch (error: any) {
+    console.log("GOOGLE SIGN IN ERROR");
+    console.log(error);
+    console.log("CODE:", error?.code);
+    console.log("MESSAGE:", error?.message);
+
     const message = mapGoogleError(error);
 
-    // User cancelled — return null so the UI can handle it silently
     if (!message) return null;
 
-    // Rethrow with a user-friendly message
-    const friendlyError = new Error(message);
-    throw friendlyError;
+    throw new Error(message);
   }
 }
 
