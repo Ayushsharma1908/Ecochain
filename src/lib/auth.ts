@@ -33,8 +33,8 @@ export function createAuthUser(email: string, provider: AuthProvider, name?: str
 }
 
 /**
- * Create an AuthUser from a real Google / Firebase sign-in response.
- * The `uid` is the stable Firebase UID — used as the user's persistent ID.
+ * Create an AuthUser from a Google Sign-In response.
+ * The `uid` is the stable Google user ID — used as the user's persistent ID.
  */
 export function createGoogleAuthUser(
   uid: string,

@@ -9,7 +9,7 @@ interface AuthContextState {
   loading: boolean;
   signInWithEmail: (email: string, name?: string) => Promise<AuthUser>;
   /**
-   * Opens the native Google account picker and signs in via Firebase.
+   * Opens the native Google account picker and signs in.
    *
    * Returns the signed-in user, or `null` if the user cancelled.
    * Throws an `Error` (with a `.message` safe to display) on failure.
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     await clearAuthUser();
     setUser(null);
-    // Sign out from Google + Firebase in the background (best-effort)
+    // Sign out from Google in the background (best-effort)
     signOutGoogle().catch(() => {});
   }, []);
 

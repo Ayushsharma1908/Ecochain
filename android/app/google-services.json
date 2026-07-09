@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "508663573845-efs4634qiudgpvsi1045nirgl7v38v8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ayushsharma1908.ecochainlink",
+            "certificate_hash": "529f2a7502e1eaddb885c4e77bc6014909963867"
+          }
+        },
+        {
           "client_id": "508663573845-g326qqo3fn973png0jqgcr53gaavic7f.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

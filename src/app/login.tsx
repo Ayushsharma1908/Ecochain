@@ -31,7 +31,9 @@ export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [loadingProvider, setLoadingProvider] = useState<"email" | "google" | null>(null);
+  const [loadingProvider, setLoadingProvider] = useState<
+    "email" | "google" | null
+  >(null);
   const [googleError, setGoogleError] = useState<string | null>(null);
 
   // Press-scale animation for the Google button
@@ -78,14 +80,27 @@ export default function LoginScreen() {
       } else {
         router.replace("/(tabs)");
       }
-    } catch (err: unknown) {
+    } catch (err: any) {
       setLoadingProvider(null);
+
+      console.log("LOGIN ERROR:", err);
+
+      alert(
+        JSON.stringify(
+          {
+            code: err?.code,
+            message: err?.message,
+          },
+          null,
+          2,
+        ),
+      );
+
       if (provider === "google") {
-        setGoogleError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
+        setGoogleError(err?.message ?? "Google Sign-In failed.");
       }
     }
   };
-
   const isLoading = loadingProvider !== null;
 
   return (
@@ -212,12 +227,30 @@ export default function LoginScreen() {
           />
 
           {/* Divider */}
-          <View style={{ flexDirection: "row", alignItems: "center", gap: Space.md }}>
-            <View style={{ flex: 1, height: 1, backgroundColor: "rgba(255,255,255,0.14)" }} />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: Space.md,
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: "rgba(255,255,255,0.14)",
+              }}
+            />
             <Text variant="monoSm" style={{ color: theme.cardTextMuted }}>
               OR
             </Text>
-            <View style={{ flex: 1, height: 1, backgroundColor: "rgba(255,255,255,0.14)" }} />
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: "rgba(255,255,255,0.14)",
+              }}
+            />
           </View>
 
           {/* ── Google Sign-In Button ───────────────────────────────────────── */}
@@ -267,7 +300,9 @@ export default function LoginScreen() {
                   fontSize: 15,
                 }}
               >
-                {loadingProvider === "google" ? "Signing in…" : "Continue with Google"}
+                {loadingProvider === "google"
+                  ? "Signing in…"
+                  : "Continue with Google"}
               </Text>
 
               {/* Invisible spacer so text stays optically centred */}
