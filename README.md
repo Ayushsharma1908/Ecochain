@@ -219,7 +219,10 @@ npx expo run:android
 
 | Home | AI Advisor | Scanner |
 |------|------------|----------|
-| Add Screenshot | Add Screenshot | Add Screenshot |
+| <img width="1080" height="2412" alt="home page" src="https://github.com/user-attachments/assets/b0e45db7-377c-4549-8181-e5461acbb04d" />
+ | <img width="1080" height="2412" alt="ai advisor" src="https://github.com/user-attachments/assets/d678389d-34b3-4dd9-8996-d237b6fdba65" />
+ | <img width="1080" height="2412" alt="scanner" src="https://github.com/user-attachments/assets/9c8c6aa2-f105-46c8-981d-efecccd00e7c" />
+|
 
 ---
 
