@@ -1,154 +1,170 @@
+# 🌿 EcoChain Link
+
 <div align="center">
 
-# 🌱 EcoChain Link
+![EcoChain Link Banner](./assets/images/banner.png)
 
-### AI-Powered Sustainability Assistant built with React Native & Expo
+### AI-Powered Smart Waste Management & Circular Economy Platform
 
-Scan • Analyze • Act Sustainably ♻️
+Transforming everyday products into sustainable choices through AI-powered waste classification, eco-scoring, disposal guidance, and nearby recycler discovery.
 
-![React Native](https://img.shields.io/badge/React%20Native-0.81-blue?logo=react)
-![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?logo=expo)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Google-Gemini%20AI-4285F4?logo=google)
-![License](https://img.shields.io/badge/License-MIT-green)
+---
+
+![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?style=for-the-badge&logo=expo)
+![React Native](https://img.shields.io/badge/React%20Native-0.81-blue?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript)
+![Firebase](https://img.shields.io/badge/Firebase-Authentication-FFCA28?style=for-the-badge&logo=firebase)
+![Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-4285F4?style=for-the-badge&logo=google)
+![MongoDB Ready](https://img.shields.io/badge/Scalable-MongoDB-47A248?style=for-the-badge&logo=mongodb)
 
 </div>
 
 ---
 
-## 📖 Overview
+# 📖 Overview
 
-EcoChain Link is an AI-powered mobile application that helps users make environmentally responsible purchasing decisions through intelligent product analysis.
+EcoChain Link is an AI-powered sustainability platform that helps users understand the environmental impact of everyday products.
 
-Simply scan a product barcode and instantly receive:
+Using barcode scanning, AI recommendations, environmental scoring, and recycler discovery, the application guides users toward responsible disposal while encouraging circular economy practices.
 
-- 🌱 Sustainability insights
-- ♻️ Waste classification
-- 🤖 AI-powered recommendations
-- 📍 Nearby recycling centers
-- 📊 Sustainability score
-
-Built during **HACKHAZARDS'26 | Namespace** under the **Expo Track – Build Mobile Apps with Expo**.
+Designed with a modern mobile-first experience, EcoChain Link simplifies sustainable decision-making for everyone.
 
 ---
 
-# ✨ Features
+# ✨ Key Features
 
-### 📷 Barcode Scanning
+## 🔍 Smart Product Scanner
 
-Scan any EAN/UPC product barcode using your device camera.
-
----
-
-### 🤖 AI Sustainability Advisor
-
-Powered by Google Gemini AI to provide contextual sustainability recommendations.
+- Barcode scanning
+- AI-powered product recognition
+- Material identification
+- Waste categorization
 
 ---
 
-### 📊 Sustainability Score
+## 🤖 AI Sustainability Advisor
 
-Custom scoring engine evaluating products based on:
+Powered by **Google Gemini AI**
 
-- Packaging
-- Eco Labels
-- Plastic Usage
-- Material Composition
-- Waste Type
+Provides:
 
----
-
-### ♻️ Waste Classification
-
-Automatically classifies products into disposal categories including:
-
-- Plastic
-- Paper
-- Glass
-- Metal
-- Organic Waste
+- Personalized disposal guidance
+- Recycling recommendations
+- Sustainability explanations
+- Environmental insights
+- Circular economy suggestions
 
 ---
 
-### 📍 Recycler Discovery
+## 🌱 Eco Score Engine
 
-Locate nearby recycling centers using Expo Location.
+Every scanned product receives an environmental score based on:
 
----
-
-### 📱 Cross Platform
-
-Single codebase supporting both Android and iOS using React Native + Expo.
-
----
-
-# 🏗 Architecture
-
-```text
-                User
-                  │
-                  ▼
-        Barcode Scanner
-                  │
-                  ▼
-        OpenFoodFacts API
-                  │
-                  ▼
-          Product Metadata
-                  │
-        ┌─────────┼──────────┐
-        ▼         ▼          ▼
-   Gemini AI   Sustainability  Waste
-   Analysis      Scoring    Classification
-        │         │          │
-        └─────────┼──────────┘
-                  ▼
-          Recycler Discovery
-                  │
-                  ▼
-          User Recommendations
-```
+- Material sustainability
+- Recyclability
+- Disposal impact
+- Circular economy value
 
 ---
 
-# 🛠 Tech Stack
+## 📍 Nearby Recycler Finder
 
-### Mobile
+Location-aware recycler discovery including:
 
-- React Native
-- Expo SDK 54
-- Expo Router
-- TypeScript
+- Nearby recycling centers
+- Distance sorting
+- Waste category support
+- Contact information
 
-### AI
+---
 
-- Google Gemini AI
+## 📊 Sustainability Dashboard
 
-### APIs
+Track your impact through:
 
-- OpenFoodFacts API
+- Total scans
+- Waste categories
+- Eco score trends
+- Weekly sustainability insights
+- Circular impact metrics
 
-### Native Modules
+---
 
-- Expo Camera
-- Expo Location
+## 👤 Secure Authentication
 
-### State Management
-
-- React Hooks
+- Google Sign-In
+- Firebase Authentication
+- Persistent login sessions
+- Secure authentication flow
 
 ---
 
 # 📱 Screens
 
-- Splash Screen
-- Home
+- Splash
+- Authentication
+- Home Dashboard
 - Barcode Scanner
-- Product Details
-- Sustainability Analysis
-- Recycler Finder
-- AI Recommendation
-- Settings
+- AI Advisor
+- Sustainability Report
+- Recycler Locator
+- Profile
+
+---
+
+# 🏗️ Tech Stack
+
+| Category | Technology |
+|-----------|------------|
+| Framework | Expo React Native |
+| Language | TypeScript |
+| Navigation | Expo Router |
+| Authentication | Firebase Authentication |
+| AI | Google Gemini 2.5 Flash |
+| Storage | AsyncStorage |
+| Maps & Location | Expo Location |
+| Camera | Expo Camera |
+| Icons | Lucide React Native |
+| Animations | Moti + Reanimated |
+
+---
+
+# 🧠 AI Capabilities
+
+EcoChain Link uses Gemini AI to provide:
+
+- Product sustainability analysis
+- Waste disposal recommendations
+- Recycling education
+- Environmental explanations
+- Personalized eco-friendly alternatives
+
+---
+
+# 🔐 Authentication
+
+- Google OAuth
+- Firebase Authentication
+- Persistent Sessions
+- Secure Login Flow
+
+---
+
+# 📂 Project Structure
+
+```
+src/
+│
+├── app/
+├── components/
+├── hooks/
+├── lib/
+├── providers/
+├── services/
+├── types/
+├── utils/
+└── assets/
+```
 
 ---
 
@@ -157,12 +173,8 @@ Single codebase supporting both Android and iOS using React Native + Expo.
 ## Clone
 
 ```bash
-git clone https://github.com/Ayushsharma1908/Ecochain.git
-
-cd Ecochain
+git clone https://github.com/YOUR_USERNAME/ecochain-link.git
 ```
-
----
 
 ## Install
 
@@ -170,143 +182,99 @@ cd Ecochain
 npm install
 ```
 
----
-
-## Environment Variables
+## Configure Environment
 
 Create a `.env` file.
 
 ```env
-EXPO_PUBLIC_GEMINI_API_KEY=YOUR_API_KEY
-EXPO_PUBLIC_GEMINI_MODEL=gemini-2.5-flash
+EXPO_PUBLIC_GEMINI_API_KEY=
+
+EXPO_PUBLIC_FIREBASE_API_KEY=
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+EXPO_PUBLIC_FIREBASE_APP_ID=
+
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=
 ```
 
 ---
 
-## Start
+## Start Development
 
 ```bash
 npx expo start
 ```
 
----
+Development Build
 
-# 📂 Project Structure
-
-```text
-src
-│
-├── app
-├── components
-├── constants
-├── hooks
-├── services
-├── utils
-├── assets
-└── types
+```bash
+npx expo run:android
 ```
 
 ---
 
-# ⚙ Workflow
+# 📸 Screenshots
 
-```text
-Scan Barcode
-      │
-      ▼
-Fetch Product Data
-      │
-      ▼
-Generate AI Insights
-      │
-      ▼
-Calculate Sustainability Score
-      │
-      ▼
-Classify Waste
-      │
-      ▼
-Find Nearby Recyclers
-      │
-      ▼
-Display Recommendation
-```
+| Home | AI Advisor | Scanner |
+|------|------------|----------|
+| Add Screenshot | Add Screenshot | Add Screenshot |
 
 ---
 
-# 🚧 Challenges
+# 🎯 Problem Statement
 
-During development we addressed several engineering challenges including:
+Improper waste disposal and lack of awareness contribute significantly to environmental pollution.
 
-- Mobile networking reliability
-- Cross-platform UI consistency
-- Offline handling
-- Product data availability
-- AI prompt engineering
-- Performance optimization
+EcoChain Link empowers users with intelligent guidance, making sustainable choices simple and accessible through AI.
 
 ---
 
-# 🚀 Future Roadmap
+# 🌍 Impact
 
-- 🌍 Carbon Footprint Estimation
-- 🧠 Personalized AI Recommendations
-- 📷 OCR Product Recognition
-- 🏆 Gamified Sustainability Rewards
-- 📈 Product Lifecycle Tracking
-- 🌐 Multi-source Product Database
-- 👥 Community Recycling Contributions
+- Promote responsible recycling
+- Reduce landfill waste
+- Increase sustainability awareness
+- Encourage circular economy practices
+- Help users make environmentally conscious decisions
 
 ---
 
-# 👥 Team
+# 📈 Future Roadmap
 
-### Team Texas
-
-**Ayush Kumar Sharma**
-
-Full Stack Developer
-
-**Yanshi Chauhan**
-
-Developer
+- Community Challenges
+- Carbon Footprint Tracking
+- Reward System
+- NGO Integration
+- Smart Collection Scheduling
+- Marketplace for Recyclables
+- Multilingual Support
 
 ---
 
-# 🏆 Hackathon
+# 👨‍💻 Built With ❤️
 
-**Event**
+Made using
 
-HACKHAZARDS'26 | Namespace
-
-**Theme**
-
-Climate & Sustainability Systems
-
-**Track**
-
-Expo Track – Build Mobile Apps with Expo
+- Expo
+- React Native
+- Firebase
+- Google Gemini AI
+- TypeScript
 
 ---
 
-# 🌱 Vision
+# 📄 License
 
-Our vision is to simplify sustainable living by combining artificial intelligence, mobile technologies, and environmental awareness into one seamless experience.
-
-We believe informed decisions lead to a greener future.
-
----
-
-# 📜 License
-
-MIT License
+This project is licensed under the MIT License.
 
 ---
 
 <div align="center">
 
-### 🌍 Building a Sustainable Future, One Scan at a Time ♻️
+### 🌱 Scan Smart • Dispose Better • Build a Circular Future
 
-Made with ❤️ using React Native, Expo & Google Gemini AI
+**EcoChain Link**
 
 </div>
