@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "508663573845",
+    "project_id": "ecochain-link",
+    "storage_bucket": "ecochain-link.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508663573845:android:d968602e92b8071c7893dc",
+        "android_client_info": {
+          "package_name": "com.ayushsharma1908.ecochainlink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "508663573845-g326qqo3fn973png0jqgcr53gaavic7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ayushsharma1908.ecochainlink",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "508663573845-cgma5sg9ki696unssg4svo9spm57ctjt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAroI-x650gt8TQDQkTGMqWPII60jNvR88"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "508663573845-cgma5sg9ki696unssg4svo9spm57ctjt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "508663573845-d3q2g9h71k5r9qdojtvtanhahrlk235c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ayushsharma1908.ecochainlink"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

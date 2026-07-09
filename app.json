@@ -17,7 +17,11 @@
       "permissions": [
         "CAMERA",
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ],
       "package": "com.ayushsharma1908.ecochainlink",
       "googleServicesFile": "./google-services.json"
@@ -60,6 +64,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2791456c-85a4-490e-8a70-348f934294e7"
+      }
     }
   }
 }
