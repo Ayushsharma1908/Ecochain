@@ -77,7 +77,7 @@ export function NavBar() {
             width: 40,
             height: 40,
             borderRadius: Radius.md,
-            backgroundColor: theme.card,
+            backgroundColor: "#F2E3BC",
             alignItems: "center",
             justifyContent: "center",
             borderWidth: 1,
@@ -87,8 +87,8 @@ export function NavBar() {
           }}
         >
           <Image
-            source={require("../../assets/images/icon.png")}
-            style={{ width: 42, height: 42 }}
+            source={require("../../assets/images/ecochain-icon.png")}
+            style={{ width: 65, height: 65 }}
             contentFit="contain"
           />
         </View>
