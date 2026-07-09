@@ -10,7 +10,7 @@ expo-env.d.ts
 
 # Generated native folders (Expo Prebuild)
 ios/
-android/
+# android/
 
 # Environment files
 .env
