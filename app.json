@@ -10,7 +10,7 @@
     "backgroundColor": "#F2E3BC",
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/android-icon-foreground-padded.png",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundColor": "#F2E3BC"
       },
       "predictiveBackGestureEnabled": false,
