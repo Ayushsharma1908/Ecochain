@@ -8,9 +8,19 @@
     "scheme": "ecochainlink",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#F2E3BC",
+    "splash": {
+      "image": "./assets/images/ecochain-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F2E3BC"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundColor": "#F2E3BC"
+      },
+      "splash": {
+        "image": "./assets/images/ecochain-icon.png",
+        "resizeMode": "contain",
         "backgroundColor": "#F2E3BC"
       },
       "predictiveBackGestureEnabled": false,
@@ -42,6 +52,15 @@
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/ecochain-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#F2E3BC"
+        }
+      ],
 
       [
         "expo-camera",
