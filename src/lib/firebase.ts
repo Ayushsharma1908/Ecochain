@@ -10,12 +10,12 @@ import { initializeAuth } from "firebase/auth";
 import { getReactNativePersistence } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBkwXxOuXm-zwwNRZqFddfwXNZ0IUqiUpc",
-  authDomain: "ecochain-link.firebaseapp.com",
-  projectId: "ecochain-link",
-  storageBucket: "ecochain-link.firebasestorage.app",
-  messagingSenderId: "508663573845",
-  appId: "1:508663573845:web:31e8895fcedae8b27893dc",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? "",
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? "",
 };
 
 // Guard against double-init during Expo Fast Refresh
