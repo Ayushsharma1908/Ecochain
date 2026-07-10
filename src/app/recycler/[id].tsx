@@ -6,11 +6,17 @@ import {
   Clock,
   MapPin,
   Navigation,
-  Truck
+  Truck,
 } from "lucide-react-native";
 import { MotiView } from "moti";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Linking, Pressable, View } from "react-native";
+import {
+  ActivityIndicator,
+  Linking,
+  Pressable,
+  ScrollView,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Text } from "@/components/ui";
@@ -212,7 +218,10 @@ export default function RecyclerDetailScreen() {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      router.replace({ pathname: "/login", params: { redirect: `/recycler/${id}` } });
+      router.replace({
+        pathname: "/login",
+        params: { redirect: `/recycler/${id}` },
+      });
       return;
     }
     if (!isAuthenticated) return;
@@ -262,7 +271,8 @@ export default function RecyclerDetailScreen() {
 
   const kindInfo = KIND_THEME[recycler.kind];
   const accentColor = (theme as any)[kindInfo.accent];
-  const accentSoft = (theme as any)[kindInfo.accent + "Soft"] ?? theme.lichenSoft;
+  const accentSoft =
+    (theme as any)[kindInfo.accent + "Soft"] ?? theme.lichenSoft;
   const accentDark = (theme as any)[kindInfo.accent + "Dark"] ?? accentColor;
 
   const openDirections = () => {
@@ -315,11 +325,17 @@ export default function RecyclerDetailScreen() {
         </MotiView>
       </View>
 
-      <View
+      <ScrollView
         style={{
           flex: 1,
           paddingHorizontal: Space.lg,
         }}
+        contentContainerStyle={{
+          paddingBottom: Space.xl,
+        }}
+        showsVerticalScrollIndicator={true}
+        indicatorStyle="black"
+        bounces
       >
         {/* ─── Hero ─── */}
         <Section delay={60}>
@@ -598,7 +614,7 @@ export default function RecyclerDetailScreen() {
             </View>
           </Section>
         )}
-      </View>
+      </ScrollView>
 
       {/* ─── Bottom CTA — pinned ─── */}
       <MotiView
@@ -635,7 +651,9 @@ export default function RecyclerDetailScreen() {
 
         <Pressable
           onPress={() =>
-            Linking.openURL(`tel:${(recycler as any).phone ?? ""}`).catch(() => {})
+            Linking.openURL(`tel:${(recycler as any).phone ?? ""}`).catch(
+              () => {},
+            )
           }
           style={({ pressed }) => ({
             alignItems: "center",
