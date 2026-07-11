@@ -1,273 +1,268 @@
-# 🌿 EcoChain Link
+<img width="4320" height="1440" alt="HackHazards Banner" src="https://github.com/user-attachments/assets/c698b2cd-da84-4cb0-9276-125c6a7244aa" />
 
-<div align="center">
+# 🚀 EcoChain Link
 
-![EcoChain Link Banner](./assets/images/banner.png)
-
-### AI-Powered Smart Waste Management & Circular Economy Platform
-
-Transforming everyday products into sustainable choices through AI-powered waste classification, eco-scoring, disposal guidance, and nearby recycler discovery.
+> **An AI-powered sustainability companion that helps people identify waste, dispose of it correctly, understand its environmental impact, and discover nearby recycling options—all in one seamless mobile experience.**
 
 ---
 
-![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?style=for-the-badge&logo=expo)
-![React Native](https://img.shields.io/badge/React%20Native-0.81-blue?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript)
-![Firebase](https://img.shields.io/badge/Firebase-Authentication-FFCA28?style=for-the-badge&logo=firebase)
-![Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-4285F4?style=for-the-badge&logo=google)
-![MongoDB Ready](https://img.shields.io/badge/Scalable-MongoDB-47A248?style=for-the-badge&logo=mongodb)
+## 📌 Problem & Domain
 
-</div>
+Millions of recyclable items end up in landfills because people are unsure about proper disposal methods. Recycling rules vary by location, packaging labels can be confusing, and reliable sustainability guidance isn't always easily accessible.
+
+**EcoChain Link** bridges this gap by providing an AI-powered assistant that recognizes waste, recommends the correct disposal method, explains environmental impact, and promotes responsible recycling habits.
+
+### Themes Selected
+
+- [ ] Human Experience & Productivity
+- [x] Climate & Sustainability Systems
+- [ ] HealthTech & Bio Platforms
+- [ ] Learning & Knowledge Systems
+- [ ] Work, Finance & Digital Economy
+- [ ] Infrastructure, Mobility & Smart Systems
+- [ ] Trust, Identity & Security
+- [ ] Media, Social & Interactive Platforms
+- [ ] Public Systems, Governance and Civic Tech
+- [ ] Developer Tools & Software Infrastructure
 
 ---
 
-# 📖 Overview
+# 🎯 Objective
 
-EcoChain Link is an AI-powered sustainability platform that helps users understand the environmental impact of everyday products.
+EcoChain Link makes sustainable waste management simple, educational, and accessible for everyone.
 
-Using barcode scanning, AI recommendations, environmental scoring, and recycler discovery, the application guides users toward responsible disposal while encouraging circular economy practices.
+### Target Users
 
-Designed with a modern mobile-first experience, EcoChain Link simplifies sustainable decision-making for everyone.
+- 👨‍🎓 Students
+- 🏠 Households
+- 🌱 Eco-conscious individuals
+- 🏙️ Communities
+- ♻️ Anyone unsure about proper waste disposal
+
+### Pain Points
+
+- Uncertainty about whether an item is recyclable.
+- Lack of knowledge about proper disposal methods.
+- Limited awareness of environmental impact.
+- Difficulty locating nearby recycling centers.
+
+### Our Solution
+
+EcoChain Link provides:
+
+- 🤖 AI-powered waste recognition
+- ♻️ Smart disposal recommendations
+- 🌍 Environmental impact analysis
+- 📍 Nearby recycler discovery
+- 💬 Conversational sustainability guidance
+- 📈 Sustainability tracking & scoring
+
+---
+
+# 🧠 Team & Approach
+
+## Team Name
+
+`Team Texas`
+
+## Team Members
+
+| Name | Role |
+|------|------|
+| **Ayush Kumar Sharma** | Full Stack Developer & AI Integration |
+| **Yanshi Chauhan** | UI/UX Designer & Frontend Developer |
+
+---
+
+## Our Approach
+
+We wanted to solve a real-world problem that affects millions of people every day—incorrect waste disposal.
+
+Instead of creating another recycling lookup application, we built an intelligent sustainability companion that educates users while guiding them toward environmentally responsible decisions.
+
+### Challenges We Solved
+
+- Designing an intuitive AI-first experience
+- Building an engaging sustainability dashboard
+- Delivering meaningful environmental insights
+- Creating a scalable architecture for future recycler integrations
+- Ensuring a smooth cross-platform mobile experience with Expo
+
+---
+
+# 🛠️ Tech Stack
+
+## Core Technologies Used
+
+| Category | Technologies |
+|-----------|--------------|
+| **Frontend** | React Native, Expo, TypeScript |
+| **Backend** | Node.js, Express.js |
+| **Database** | Firebase Authentication, Local Storage |
+| **AI** | Google Gemini API |
+| **Maps & Geocoding** | OpenStreetMap, Nominatim |
+| **Hosting** | Expo, Render |
+
+---
+
+## Additional Technologies Used
+
+- [x] AI / ML
+- [ ] Web3 / Blockchain
+- [ ] Cyber Security
+- [x] Cloud
+
+---
+
+# 🏆 Sponsored Track
+
+- [x] **Expo Track** – Built using Expo
+- [ ] Neo4j Track
+- [ ] Base44 Track
+
+### Expo Track Implementation
+
+EcoChain Link is built entirely with **Expo** and **React Native**, leveraging Expo's development ecosystem for rapid cross-platform development, camera integration, animations, navigation, and native capabilities.
 
 ---
 
 # ✨ Key Features
 
-## 🔍 Smart Product Scanner
-
-- Barcode scanning
-- AI-powered product recognition
-- Material identification
-- Waste categorization
-
----
-
-## 🤖 AI Sustainability Advisor
-
-Powered by **Google Gemini AI**
-
-Provides:
-
-- Personalized disposal guidance
-- Recycling recommendations
-- Sustainability explanations
-- Environmental insights
-- Circular economy suggestions
+- ✅ AI-powered Waste Recognition
+- ✅ Smart Disposal Guidance
+- ✅ Environmental Impact Analysis
+- ✅ Nearby Recycler Discovery
+- ✅ Conversational AI Sustainability Advisor
+- ✅ Sustainability Score
+- ✅ Circular Economy Insights
+- ✅ Modern Mobile UI with Smooth Animations
 
 ---
 
-## 🌱 Eco Score Engine
+# 📽️ Demo & Deliverables
 
-Every scanned product receives an environmental score based on:
-
-- Material sustainability
-- Recyclability
-- Disposal impact
-- Circular economy value
-
----
-
-## 📍 Nearby Recycler Finder
-
-Location-aware recycler discovery including:
-
-- Nearby recycling centers
-- Distance sorting
-- Waste category support
-- Contact information
+| Resource | Link |
+|----------|------|
+| 🎥 Demo Video | *(Add YouTube Link)* |
+| 📱 APK / Deployment | *(Add Link)* |
+| 📊 Pitch Deck | *(Add PPT Link)* |
+| 💻 GitHub Repository | *(Add Repository Link)* |
 
 ---
 
-## 📊 Sustainability Dashboard
+# ✅ Tasks & Bonus Checklist
 
-Track your impact through:
-
-- Total scans
-- Waste categories
-- Eco score trends
-- Weekly sustainability insights
-- Circular impact metrics
+- [x] All team members completed the mandatory social task
+- [ ] Bonus Task 1 – Badge Sharing
+- [x] Bonus Task 2 – Blog / Article
 
 ---
 
-## 👤 Secure Authentication
+# 🧪 How to Run the Project
 
-- Google Sign-In
-- Firebase Authentication
-- Persistent login sessions
-- Secure authentication flow
+## Requirements
 
----
-
-# 📱 Screens
-
-- Splash
-- Authentication
-- Home Dashboard
-- Barcode Scanner
-- AI Advisor
-- Sustainability Report
-- Recycler Locator
-- Profile
+- Node.js 20+
+- npm
+- Expo CLI
+- Android Studio or Expo Go
+- Google Gemini API Key
 
 ---
 
-# 🏗️ Tech Stack
+## Environment Variables
 
-| Category | Technology |
-|-----------|------------|
-| Framework | Expo React Native |
-| Language | TypeScript |
-| Navigation | Expo Router |
-| Authentication | Firebase Authentication |
-| AI | Google Gemini 2.5 Flash |
-| Storage | AsyncStorage |
-| Maps & Location | Expo Location |
-| Camera | Expo Camera |
-| Icons | Lucide React Native |
-| Animations | Moti + Reanimated |
-
----
-
-# 🧠 AI Capabilities
-
-EcoChain Link uses Gemini AI to provide:
-
-- Product sustainability analysis
-- Waste disposal recommendations
-- Recycling education
-- Environmental explanations
-- Personalized eco-friendly alternatives
-
----
-
-# 🔐 Authentication
-
-- Google OAuth
-- Firebase Authentication
-- Persistent Sessions
-- Secure Login Flow
-
----
-
-# 📂 Project Structure
-
-```
-src/
-│
-├── app/
-├── components/
-├── hooks/
-├── lib/
-├── providers/
-├── services/
-├── types/
-├── utils/
-└── assets/
-```
-
----
-
-# 🚀 Getting Started
-
-## Clone
-
-```bash
-git clone https://github.com/YOUR_USERNAME/ecochain-link.git
-```
-
-## Install
-
-```bash
-npm install
-```
-
-## Configure Environment
-
-Create a `.env` file.
+Create a `.env` file in the project root.
 
 ```env
-EXPO_PUBLIC_GEMINI_API_KEY=
-
-EXPO_PUBLIC_FIREBASE_API_KEY=
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=
-EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=
-EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-EXPO_PUBLIC_FIREBASE_APP_ID=
-
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=
+EXPO_PUBLIC_GEMINI_API_KEY=YOUR_API_KEY
 ```
 
 ---
 
-## Start Development
+## Installation
 
 ```bash
+# Clone Repository
+git clone https://github.com/yourusername/ecochain-link.git
+
+# Open Project
+cd ecochain-link
+
+# Install Dependencies
+npm install
+
+# Start Development Server
 npx expo start
 ```
 
-Development Build
+---
+
+## Running on Android
 
 ```bash
 npx expo run:android
 ```
 
----
-
-
-# 🎯 Problem Statement
-
-Improper waste disposal and lack of awareness contribute significantly to environmental pollution.
-
-EcoChain Link empowers users with intelligent guidance, making sustainable choices simple and accessible through AI.
+Or scan the QR code using Expo Go (where supported).
 
 ---
 
-# 🌍 Impact
+# 🧬 Future Scope
 
-- Promote responsible recycling
-- Reduce landfill waste
-- Increase sustainability awareness
-- Encourage circular economy practices
-- Help users make environmentally conscious decisions
+We plan to extend EcoChain Link with:
 
----
-
-# 📈 Future Roadmap
-
-- Community Challenges
-- Carbon Footprint Tracking
-- Reward System
-- NGO Integration
-- Smart Collection Scheduling
-- Marketplace for Recyclables
-- Multilingual Support
+- 📦 Barcode-based product identification
+- 🌍 Country-specific recycling regulations
+- 📍 Verified live recycler database
+- 🏆 Gamification & eco rewards
+- 🤝 Community sustainability challenges
+- 📊 Personal carbon footprint analytics
+- 🔔 Recycling reminders
+- 🌐 Multi-language support
+- 📷 Offline AI waste recognition
+- 🏛️ Municipality waste collection integration
 
 ---
 
-# 👨‍💻 Built With ❤️
+# 📎 Resources / Credits
 
-Made using
+## APIs
 
-- Expo
+- Google Gemini API
+- OpenStreetMap
+- Nominatim Geocoding
+
+## Libraries
+
 - React Native
-- Firebase
-- Google Gemini AI
+- Expo
 - TypeScript
+- React Navigation
+- Moti
+- Lucide Icons
+
+## Acknowledgements
+
+Special thanks to:
+
+- Namespace HackHazards
+- Expo
+- Google Gemini
+- Open Source Community
 
 ---
 
-# 📄 License
+# 🏁 Final Words
 
-This project is licensed under the MIT License.
+Building **EcoChain Link** during **HackHazards** has been an incredible experience. We set out to create more than just a waste classification app—we built an AI-powered sustainability companion that empowers users to make environmentally responsible decisions with confidence.
+
+From brainstorming and designing the user experience to integrating AI and refining the mobile interface, every iteration brought us closer to our vision.
+
+We sincerely thank **Namespace** for organizing this amazing hackathon and providing a platform where innovation can contribute to a more sustainable future.
+
+We look forward to continuing EcoChain Link beyond the hackathon and making an even greater real-world impact.
 
 ---
 
-<div align="center">
-
-### 🌱 Scan Smart • Dispose Better • Build a Circular Future
-
-**EcoChain Link**
-
-</div>
+## 🌱 Built with ❤️ by Team Texas
