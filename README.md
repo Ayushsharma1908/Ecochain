@@ -69,8 +69,8 @@ EcoChain Link provides:
 
 | Name | Role |
 |------|------|
-| **Ayush Kumar Sharma** | Full Stack Developer & AI Integration |
-| **Yanshi Chauhan** | UI/UX Designer & Frontend Developer |
+| **Ayush Kumar Sharma** | Frontend Developer & AI Integration |
+| **Yanshi Chauhan** | Backend Developer |
 
 ---
 
