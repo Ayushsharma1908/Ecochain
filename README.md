@@ -145,7 +145,7 @@ EcoChain Link is built entirely with **Expo** and **React Native**, leveraging E
 |----------|------|
 | 🎥 Demo Video | *(https://drive.google.com/file/d/1eTcjFDKUZrJ12Jwz7nraqN50Zr9j56Zf/view?usp=sharing)* |
 | 📱 APK / Deployment | *(https://expo.dev/accounts/ayushsharma_1908/projects/ecochain-link/builds/a3dd8e77-2d44-4e13-95fb-d1449596061b)* |
-| 📊 Pitch Deck | *(https://docs.google.com/presentation/d/1d06JjjvXSA2IY9SkgwyrxccZ05_DtYoo/edit?usp=sharing&ouid=109462555358807586968&rtpof=true&sd=true)* |
+| 📊 Pitch Deck | *(https://docs.google.com/presentation/d/1d06JjjvXSA2IY9SkgwyrxccZ05_DtYoo/edit?usp=drive_link&ouid=109462555358807586968&rtpof=true&sd=true)* |
 
 ---
 
